@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parasite Chain - Keys</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0a0a;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #e0fdfd;
+    }
+
+    a { text-decoration: none; }
+    a:hover { text-decoration: none; }
+
+    header {
+      background: #0a0a0a;
+      border-bottom: 1px solid #033;
+      box-shadow: 0 0 10px rgba(0,255,255,0.15);
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-electric {
+      display: inline-block;
+      border: 1px solid #00e0e0;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #e0fdfd;
+      background: #111;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+    }
+
+    .btn-electric:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    }
+
+    #wallet-balance {
+      font-size: 1.1rem;
+      color: #00e0e0;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #00e0e0;
+      text-shadow: 0 0 8px #00ffff;
+    }
+
+    .key-display {
+      margin-bottom: 2rem;
+      border: 1px solid #033;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    .key-label {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #00e0e0;
+      font-weight: bold;
+    }
+
+    .key-value {
+      word-break: break-all;
+      font-size: 1rem;
+      color: #e0fdfd;
+    }
+
+    .modal-custom {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content-custom {
+      background: #0a0a0a;
+      border: 2px solid #00e0e0;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 450px;
+      text-align: center;
+      box-shadow: 0 0 12px rgba(0,255,255,0.3);
+    }
+    .modal-title { font-size: 1.5rem; margin-bottom: 1rem; color: #00e0e0; }
+    .modal-body { margin-bottom: 1rem; color: #e0fdfd; }
+    .modal-input {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #00e0e0;
+      border-radius: 6px;
+      background: #111;
+      color: #e0fdfd;
+      text-align: center;
+    }
+	#wallet-success-message {
+  word-break: break-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align:center;
+}
+    .modal-btn { border-radius: 6px; padding: 0.5rem 1.5rem; margin: 0.3rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="xpara.html" class="btn-electric">← Back</a>
+      <button id="send-btn" class="btn-electric">Send</button>
+      <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
+      <a href="receive.html" id="recv-btn" class="btn-electric">Receive</a>
+      <button id="view-keys-btn" class="btn-electric">Keys</button>
+    </nav>
+    <div>
+      <span id="wallet-balance">BALANCE: 0 xPARA</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="title">YOUR KEYS</h1>
+    
+    <div class="key-display">
+      <div class="key-label">ADDRESS:</div>
+      <div id="address" class="key-value"></div>
+    </div>
+    
+    <div class="key-display">
+      <div class="key-label">PUBLIC KEY:</div>
+      <div id="public-key" class="key-value"></div>
+    </div>
+    
+    <div class="key-display">
+      <div class="key-label">SECRET KEY:</div>
+      <div id="secret-key" class="key-value"></div>
+    </div>
+
+    <div style="margin-top: 2rem; text-align:center;">
+      <button id="encryptWalletBtn" class="btn-electric">Encrypt Wallet</button>
+    </div>
+  </div>
+
+  <div id="wallet-password-modal" class="modal-custom">
+    <div class="modal-content-custom">
+      <div class="modal-title">Enter New Password</div>
+      <div class="modal-body">
+        <input type="password" id="wallet-new-password" class="modal-input" placeholder="New Password"/>
+      </div>
+      <button id="wallet-password-submit" class="btn-electric modal-btn">Submit</button>
+      <button id="wallet-password-cancel" class="btn-electric modal-btn">Cancel</button>
+    </div>
+  </div>
+
+  <div id="wallet-saving" class="modal-custom">
+    <div class="modal-content-custom">
+      <div class="modal-title">Encrypting Wallet...</div>
+      <div class="modal-body">
+        <div class="spinner-border text-info" role="status" style="width:3rem; height:3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Please wait while your wallet is being encrypted.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="wallet-error" class="modal-custom">
+    <div class="modal-content-custom">
+      <div class="modal-title">Error</div>
+      <div class="modal-body" id="wallet-error-message"></div>
+      <button id="wallet-error-ok" class="btn-electric modal-btn">OK</button>
+    </div>
+  </div>
+  <div id="wallet-success" class="modal-custom">
+    <div class="modal-content-custom">
+      <div class="modal-title">Wallet Encrypted</div>
+      <div class="modal-body" id="wallet-success-message"></div>
+      <button id="wallet-success-ok" class="btn-electric modal-btn">OK</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script type="module">
+    const encryptBtn = document.getElementById('encryptWalletBtn');
+    const walletPasswordModal = document.getElementById('wallet-password-modal');
+    const walletSaving = document.getElementById('wallet-saving');
+    const walletError = document.getElementById('wallet-error');
+    const walletErrorMessage = document.getElementById('wallet-error-message');
+    const walletErrorOk = document.getElementById('wallet-error-ok');
+
+    const walletSuccess = document.getElementById('wallet-success');
+    const walletSuccessMessage = document.getElementById('wallet-success-message');
+    const walletSuccessOk = document.getElementById('wallet-success-ok');
+
+    const passwordInput = document.getElementById('wallet-new-password');
+    const passwordSubmit = document.getElementById('wallet-password-submit');
+    const passwordCancel = document.getElementById('wallet-password-cancel');
+
+    function showModal(modal) { modal.style.display = 'flex'; }
+    function hideModal(modal) { modal.style.display = 'none'; }
+
+    encryptBtn.addEventListener('click', () => {
+      passwordInput.value = '';
+      showModal(walletPasswordModal);
+    });
+
+    passwordCancel.addEventListener('click', () => hideModal(walletPasswordModal));
+    walletPasswordModal.addEventListener('click', (e) => { if(e.target===walletPasswordModal) hideModal(walletPasswordModal); });
+
+    passwordSubmit.addEventListener('click', async () => {
+      const password = passwordInput.value;
+      if(!password) return;
+      hideModal(walletPasswordModal);
+      showModal(walletSaving);
+
+      try {
+        const filename = await invoke('export_wallet_with_new_password', { newPassword: password });
+        hideModal(walletSaving);
+		
+        walletSuccessMessage.textContent = `Wallet encrypted and saved as: ${filename}`;
+        showModal(walletSuccess);
+
+      } catch (err) {
+        hideModal(walletSaving);
+        walletErrorMessage.textContent = err.toString();
+        showModal(walletError);
+      }
+    });
+
+    walletErrorOk.addEventListener('click', () => hideModal(walletError));
+    walletError.addEventListener('click', (e)=> { if(e.target===walletError) hideModal(walletError); });
+
+    walletSuccessOk.addEventListener('click', () => hideModal(walletSuccess));
+    walletSaving.addEventListener('click', (e)=> { if(e.target===walletSaving) hideModal(walletSaving); });
+
+    async function fetchBalance() {
+      try {
+        const balance = await invoke('fetch_outputs_and_balance');
+        const formatted = (balance / 1e8).toFixed(4);
+        document.getElementById('wallet-balance').textContent = `BALANCE: ${formatted} xPARA`;
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        document.getElementById('wallet-balance').textContent = 'BALANCE: N/A';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchBalance();
+      setInterval(fetchBalance, 60000);
+    });
+  </script>
+</body>
+</html>

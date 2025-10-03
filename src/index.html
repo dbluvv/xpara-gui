@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xPARASITE - Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0a0a;
+      color: #e0fdfd;
+      font-family: "Segoe UI", Arial, sans-serif;
+      overflow: hidden;
+    }
+	
+	a {
+	  text-decoration: none;
+	}
+
+	a:hover {
+	  text-decoration: none;
+	}
+
+    #snake-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .login-box {
+      background: rgba(10, 10, 10, 0.85);
+      border: 1px solid #033;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 0 12px rgba(0,255,255,0.2);
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6em;
+      margin-bottom: 1.5rem;
+    }
+
+    .brand img {
+      width: 64px;
+      height: 64px;
+    }
+
+    .brand h1 {
+      font-size: 2.4rem;
+      margin: 0;
+      color: #00e0e0;
+      text-shadow: 0 0 8px #00ffff;
+    }
+
+    .btn-electric {
+      display: inline-block;
+      border: 1px solid #00e0e0;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #e0fdfd;
+      background: #111;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-electric:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    }
+
+    .address-display {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid #00e0e0;
+      color: #e0fdfd;
+      padding: 0.8rem;
+      margin: 1rem auto;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.95rem;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="snake-bg"></canvas>
+
+  <div class="hero-content">
+    <div class="login-box">
+      <div class="brand">
+        <img src="assets/logo.png" alt="xPARASITE logo">
+        <h1>xPARASITE</h1>
+      </div>
+      <div id="wallet-address" class="address-display"></div>
+      <a href="wallets.html" class="btn-electric">Select Wallet</a>
+      <button id="login-btn" class="btn-electric">Login</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    const canvas = document.getElementById("snake-bg");
+    const ctx = canvas.getContext("2d");
+    let gridSize = 20, cells, canvasWidth, canvasHeight;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvasWidth = canvas.width;
+      canvasHeight = canvas.height;
+      cells = {
+        x: Math.floor(canvasWidth / gridSize),
+        y: Math.floor(canvasHeight / gridSize)
+      };
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let snake = [{x:5,y:5},{x:4,y:5},{x:3,y:5}];
+    const maxLength = 50;
+
+    function getRandomFood() {
+      let pos;
+      do {
+        pos = {x:Math.floor(Math.random()*cells.x), y:Math.floor(Math.random()*cells.y)};
+      } while (snake.some(s=>s.x===pos.x && s.y===pos.y));
+      return pos;
+    }
+    let food = getRandomFood();
+
+    function getSafeDirections() {
+      const dirs=[{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}];
+      return dirs.filter(dir=>{
+        const nx=snake[0].x+dir.x, ny=snake[0].y+dir.y;
+        const out=nx<0||ny<0||nx>=cells.x||ny>=cells.y;
+        const hits=snake.some(s=>s.x===nx&&s.y===ny);
+        return !out && !hits;
+      });
+    }
+
+    function chooseSmartDirection() {
+      const safe=getSafeDirections();
+      if(!safe.length) return {x:0,y:0};
+      safe.sort((a,b)=>{
+        const aDist=Math.abs(snake[0].x+a.x-food.x)+Math.abs(snake[0].y+a.y-food.y);
+        const bDist=Math.abs(snake[0].x+b.x-food.x)+Math.abs(snake[0].y+b.y-food.y);
+        return aDist-bDist;
+      });
+      return safe[0];
+    }
+
+    function moveSnake() {
+      const dir=chooseSmartDirection();
+      const head={x:snake[0].x+dir.x, y:snake[0].y+dir.y};
+      if(dir.x===0&&dir.y===0) return;
+      snake.unshift(head);
+      if(head.x===food.x&&head.y===food.y){
+        food=getRandomFood();
+        while(snake.length>maxLength) snake.pop();
+      } else {
+        snake.pop();
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0,0,canvasWidth,canvasHeight);
+      ctx.shadowBlur=10; ctx.shadowColor="#00f0ff"; ctx.fillStyle="#00f0ff";
+      snake.forEach(seg=>ctx.fillRect(seg.x*gridSize,seg.y*gridSize,gridSize,gridSize));
+      ctx.shadowColor="#00aaff"; ctx.fillStyle="#00aaff";
+      ctx.fillRect(food.x*gridSize,food.y*gridSize,gridSize,gridSize);
+      ctx.shadowBlur=0;
+    }
+
+    setInterval(()=>{moveSnake();draw();},100);
+  </script>
+</body>
+</html>

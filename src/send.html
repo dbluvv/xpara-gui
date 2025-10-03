@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xPARASITE - Send</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0a0a;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #e0fdfd;
+    }
+
+    a { text-decoration: none; }
+    a:hover { text-decoration: none; }
+
+    header {
+      background: #0a0a0a;
+      border-bottom: 1px solid #033;
+      box-shadow: 0 0 10px rgba(0,255,255,0.15);
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-electric {
+      display: inline-block;
+      border: 1px solid #00e0e0;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #e0fdfd;
+      background: #111;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-electric:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    }
+
+    #wallet-balance {
+      font-size: 1.1rem;
+      color: #00e0e0;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #00e0e0;
+      text-shadow: 0 0 8px #00ffff;
+    }
+
+    input {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 1rem;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      width: 80%;
+      max-width: 400px;
+      background: #111;
+      border: 1px solid #00e0e0;
+      color: #e0fdfd;
+      text-align: center;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,255,255,0.2);
+    }
+
+    .error-message {
+      color: #ff3333;
+      font-size: 0.9rem;
+      height: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-custom {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(10, 10, 10, 0.9);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content-custom {
+      background-color: #111;
+      border: 1px solid #00e0e0;
+      border-radius: 10px;
+      padding: 2rem;
+      width: 80%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,255,255,0.3);
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #00e0e0;
+      text-shadow: 0 0 5px #00ffff;
+    }
+
+    .modal-body {
+      font-size: 1rem;
+      color: #e0fdfd;
+      margin-bottom: 1rem;
+      word-break: break-all;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .modal-btn {
+      padding: 0.4rem 1rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .btn-confirm {
+      background: #00e0e0;
+      color: #0a0a0a;
+      border: none;
+      box-shadow: 0 0 8px rgba(0,255,255,0.3);
+    }
+
+    .btn-cancel {
+      background: #111;
+      color: #00e0e0;
+      border: 1px solid #00e0e0;
+      box-shadow: 0 0 5px rgba(0,255,255,0.2);
+    }
+
+    .btn-close-modal {
+      margin-top: 1rem;
+      background: #00e0e0;
+      color: #0a0a0a;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .transaction-hash {
+      color: #00ff66;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      word-break: break-all;
+    }
+
+    .error-response {
+      color: #ff3333;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+
+    .polygon-warning {
+      color: #8247e5;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      border: 1px solid #8247e5;
+      padding: 0.5rem;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="xpara.html" class="btn-electric">← Back</a>
+      <button id="send-btn" class="btn-electric">Send</button>
+	  <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
+      <a href="receive.html" id="recv-btn" class="btn-electric">Receive</a>
+      <button id="view-keys-btn" class="btn-electric">Keys</button>
+    </nav>
+    <div>
+      <span id="wallet-balance">BALANCE: 0 xPARA</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="title">Send xPARA</h1>
+    
+    <div>
+      <input type="text" id="address-input" placeholder="Destination Address (xP... or 0x... for Polygon)" autocomplete="off" />
+      <div id="address-error" class="error-message"></div>
+    </div>
+    <div>
+      <input type="number" step="0.0001" id="amount-input" placeholder="Amount to send" autocomplete="off" />
+      <div id="amount-error" class="error-message"></div>
+    </div>
+    <button id="send-custom-btn" class="btn-electric">SEND</button>
+  </div>
+
+  <div id="transaction-modal" class="modal-custom">
+    <div class="modal-content-custom">
+      <h2 id="modal-title" class="modal-title">Confirm Transaction</h2>
+      <div id="modal-body" class="modal-body"></div>
+      <div id="modal-polygon-warning" class="polygon-warning" style="display:none;">This is a Polygon address. Funds will be sent via bridge.</div>
+      <div id="modal-buttons" class="modal-buttons">
+        <button id="modal-confirm" class="modal-btn btn-confirm">Confirm</button>
+        <button id="modal-cancel" class="modal-btn btn-cancel">Cancel</button>
+      </div>
+      <div id="modal-result"></div>
+      <button id="modal-close" class="btn-close-modal" style="display:none;">Close</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    let currentBalance = 0;
+    let isPolygonAddress = false;
+    let originalEthAddress = "";
+
+    const transactionModal = document.getElementById('transaction-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const modalConfirm = document.getElementById('modal-confirm');
+    const modalCancel = document.getElementById('modal-cancel');
+    const modalClose = document.getElementById('modal-close');
+    const modalButtons = document.getElementById('modal-buttons');
+    const modalResult = document.getElementById('modal-result');
+    const modalPolygonWarning = document.getElementById('modal-polygon-warning');
+
+    async function fetchBalance() {
+      try {
+        const balance = await invoke('fetch_outputs_and_balance');
+        currentBalance = balance / 1e8;
+        document.getElementById('wallet-balance').textContent = `BALANCE: ${currentBalance.toFixed(4)} xPARA`;
+      } catch (error) {
+        console.error(error);
+        document.getElementById('wallet-balance').textContent = 'BALANCE: N/A';
+        currentBalance = 0;
+      }
+    }
+
+    function validateXparaAddress(address) {
+      return /^xP[a-fA-F0-9]{62}$/.test(address);
+    }
+    function validateEthereumAddress(address) {
+      return /^0x[a-fA-F0-9]{40}$/.test(address);
+    }
+    function validateAmount(amount) {
+      return !isNaN(amount) && amount <= (currentBalance - 0.01);
+    }
+
+    function showConfirmationModal(address, amount, isPolygon = false) {
+      modalTitle.textContent = 'Confirm Transaction';
+      if (isPolygon) {
+        modalBody.innerHTML = `<p>Polygon Address: ${originalEthAddress}</p>
+                               <p>Bridge Contract: ${address}</p>
+                               <p>Amount: ${amount.toFixed(4)} xPARA</p>`;
+        modalPolygonWarning.style.display = 'block';
+      } else {
+        modalBody.innerHTML = `<p>Address: ${address}</p>
+                               <p>Amount: ${amount.toFixed(4)} xPARA</p>`;
+        modalPolygonWarning.style.display = 'none';
+      }
+      modalResult.innerHTML = '';
+      modalButtons.style.display = 'flex';
+      modalClose.style.display = 'none';
+      transactionModal.style.display = 'flex';
+    }
+
+    function showSendingState() {
+      modalTitle.textContent = 'Sending Transaction';
+      modalBody.innerHTML = `<p>Broadcasting transaction...</p>`;
+      modalResult.innerHTML = '';
+      modalButtons.style.display = 'none';
+      modalClose.style.display = 'none';
+      modalPolygonWarning.style.display = 'none';
+    }
+
+    function showResultState(response, isSuccess) {
+      if (isSuccess) {
+        try {
+          const responseObj = typeof response === 'string' ? JSON.parse(response) : response;
+          if (responseObj && responseObj.result) {
+            modalTitle.textContent = 'Transaction Sent Successfully';
+            modalBody.innerHTML = isPolygonAddress ? 
+              `<p>Your transaction has been sent to the Polygon bridge.</p>` : 
+              `<p>Your transaction has been sent successfully.</p>`;
+            modalResult.innerHTML = `<p class="transaction-hash">${responseObj.result}</p>`;
+          } else {
+            modalTitle.textContent = 'Transaction Error';
+            modalBody.innerHTML = `<p>Unexpected server response format.</p>`;
+            modalResult.innerHTML = `<p class="error-response">${JSON.stringify(response)}</p>`;
+          }
+        } catch(e) {
+          modalTitle.textContent = 'Transaction Error';
+          modalBody.innerHTML = `<p>Server response could not be processed.</p>`;
+          modalResult.innerHTML = `<p class="error-response">${response}</p>`;
+        }
+      } else {
+        modalTitle.textContent = 'Transaction Failed';
+        modalBody.innerHTML = `<p>Error sending transaction.</p>`;
+        modalResult.innerHTML = `<p class="error-response">${response}</p>`;
+      }
+      modalButtons.style.display = 'none';
+      modalClose.style.display = 'block';
+      isPolygonAddress = false;
+    }
+
+    function closeModal() {
+      transactionModal.style.display = 'none';
+      isPolygonAddress = false;
+    }
+
+    async function sendCustomXpara() {
+      document.getElementById('address-error').textContent = '';
+      document.getElementById('amount-error').textContent = '';
+
+      const address = document.getElementById('address-input').value.trim();
+      const amount = parseFloat(document.getElementById('amount-input').value.trim());
+
+      let valid = true;
+      isPolygonAddress = false;
+      originalEthAddress = "";
+
+      if (!validateXparaAddress(address) && !validateEthereumAddress(address)) {
+        document.getElementById('address-error').textContent = 'Invalid address format. Must start with xP or 0x.';
+        valid = false;
+      }
+      if (!validateAmount(amount)) {
+        document.getElementById('amount-error').textContent = `Amount must be ≤ balance - 0.01 (${(currentBalance - 0.01).toFixed(4)})`;
+        valid = false;
+      }
+      if (!valid) return;
+
+      let destAddress = address;
+      let extradata = "";
+      if (validateEthereumAddress(address)) {
+        isPolygonAddress = true;
+        originalEthAddress = address;
+        destAddress = "xP49857e6da6a705f4a6deb34c95cd0c06b6bfe9fbecd4b46b4e4c25753cbdf1";
+        extradata = address;
+      }
+
+      showConfirmationModal(destAddress, amount, isPolygonAddress);
+
+      return new Promise((resolve) => {
+        modalConfirm.onclick = async () => {
+          showSendingState();
+          try {
+            const result = await invoke('send_transaction', { destAddress, amount, extradata });
+            showResultState(result, true);
+            document.getElementById('address-input').value = '';
+            document.getElementById('amount-input').value = '';
+            fetchBalance();
+          } catch (error) {
+            showResultState(error, false);
+          }
+          resolve();
+        };
+        modalCancel.onclick = () => { closeModal(); resolve(); };
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchBalance();
+      setInterval(fetchBalance, 60000);
+      document.getElementById('send-custom-btn').addEventListener('click', sendCustomXpara);
+      modalClose.addEventListener('click', closeModal);
+      transactionModal.addEventListener('click', (e) => { if (e.target === transactionModal) closeModal(); });
+    });
+  </script>
+</body>
+</html>

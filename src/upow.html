@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>uPOW Mining - Parasite Chain</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0a0a;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #e0fdfd;
+    }
+
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: none;
+    }
+
+    header {
+      background: #0a0a0a;
+      border-bottom: 1px solid #033;
+      box-shadow: 0 0 10px rgba(0,255,255,0.15);
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-electric {
+      display: inline-block;
+      border: 1px solid #00e0e0;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #e0fdfd;
+      background: #111;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .btn-electric:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    }
+
+    #wallet-balance {
+      font-size: 1.1rem;
+      color: #00e0e0;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #00e0e0;
+      text-shadow: 0 0 8px #00ffff;
+    }
+
+    .tab-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      color: #e0fdfd;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .tab-btn.active {
+      border-bottom: 2px solid #00e0e0;
+      color: #00e0e0;
+    }
+    .tab-btn:hover:not(.active) {
+      color: #00aaff;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    .mining-table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+      color: #e0fdfd;
+    }
+    .mining-table th, .mining-table td {
+      border: 1px solid #033;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .mining-table th {
+      background: rgba(0,224,224,0.08);
+      color: #00e0e0;
+    }
+    .mining-table tr:hover {
+      background: rgba(0,224,224,0.05);
+    }
+
+    .stats-container {
+      margin-top: 2rem;
+      text-align: left;
+      padding: 1rem;
+      border: 1px solid #033;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      border-radius: 8px;
+    }
+    .stat-item {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    .stat-label {
+      color: #00aaff;
+      display: inline-block;
+      width: 200px;
+    }
+    .stat-value {
+      color: #00e0e0;
+    }
+
+    .advanced-info, #usdt-content {
+      text-align: left;
+      margin: 2rem auto;
+      max-width: 800px;
+      padding: 1rem;
+      border: 1px solid #033;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      border-radius: 8px;
+    }
+    .advanced-info h3 {
+      color: #00e0e0;
+      margin-bottom: 1rem;
+    }
+    .advanced-info p {
+      margin-bottom: 1rem;
+    }
+    .code-block {
+      background: rgba(0,224,224,0.08);
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      margin-bottom: 1rem;
+    }
+
+    input {
+      font-size: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 400px;
+      background: #111;
+      border: 1px solid #00e0e0;
+      border-radius: 6px;
+      color: #e0fdfd;
+      text-align: center;
+    }
+    .error-message {
+      color: #ff4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      height: 1.2rem;
+    }
+
+    .modal-custom {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content-custom {
+      background: #0a0a0a;
+      border: 2px solid #00e0e0;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 0 12px rgba(0,255,255,0.3);
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #00e0e0;
+    }
+    .modal-body {
+      margin-bottom: 1rem;
+      color: #e0fdfd;
+    }
+    .transaction-hash {
+      color: #00ff99;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    .error-response {
+      color: #ff4444;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    .modal-btn {
+      border-radius: 6px;
+      padding: 0.5rem 1.5rem;
+    }
+	
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="xpara.html" class="btn-electric">← Back</a>
+      <button id="send-btn" class="btn-electric">Send</button>
+	  <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
+      <a href="receive.html" id="recv-btn" class="btn-electric">Receive</a>
+      <button id="view-keys-btn" class="btn-electric">Keys</button>
+    </nav>
+    <div>
+      <span id="wallet-balance">BALANCE: 0 xPARA</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="title">uPOW Mining</h1>
+    <div class="tab-container">
+	  <button id="stats-tab" class="tab-btn active">My Stats</button>
+	  <button id="advanced-tab" class="tab-btn">Mining HowTo</button>
+	  <button id="usdt-tab" class="tab-btn">USDT Address</button>
+	  <button id="pools-tab" class="tab-btn">Pools</button>
+	</div>
+
+    <div id="stats-content" class="tab-content active">
+  <p>Payments are made once a day at 12am GMT approx. To receive USDT, set your POLYGON address (requires xPARA for wallet setup fee).</p>
+  <div class="stats-container">
+    <div class="stat-item"><span class="stat-label">Mining Status:</span><span id="mining-status" class="stat-value">Not Active</span></div>
+    <div class="stat-item"><span class="stat-label">USDT Address:</span><span id="usdt-address" class="stat-value">0</span></div>
+    <div class="stat-item"><span class="stat-label">Current Hashrate:</span><span id="current-hashrate" class="stat-value">0 H/s</span></div>
+    <div class="stat-item"><span class="stat-label">Pending xPARA:</span><span id="pending-xpara" class="stat-value">0</span></div>
+    <div class="stat-item"><span class="stat-label">Pending USDT:</span><span id="pending-usdt" class="stat-value">0</span></div>
+    <div class="stat-item"><span class="stat-label">Paid xPARA:</span><span id="paid-xpara" class="stat-value">0</span></div>
+    <div class="stat-item"><span class="stat-label">Paid USDT:</span><span id="paid-usdt" class="stat-value">0</span></div>
+    <div class="stat-item">
+      <span class="stat-label">Workers:</span>
+      <ul id="workers-list" style="color:#e0fdfd; padding-left:1rem;"></ul>
+    </div>
+  </div>
+</div>
+
+<div id="advanced-content" class="tab-content">
+  <div class="advanced-info">
+    <h3>Mining Options</h3>
+    <p>Use XMRig with these parameters:</p>
+    <div class="code-block">
+      Pool: xpara.site:4444<br>
+      Wallet: Your xPARA address<br>
+      Worker ID: Optional (-p parameter)<br>
+      Fixed Difficulty: Not available
+    </div>
+    <p>Example:</p>
+    <div class="code-block">
+      xmrig.exe -o xpara.site:4444 -u YOUR_WALLET_ADDRESS -p worker1
+    </div>
+  </div>
+</div>
+
+<div id="usdt-content" class="tab-content" style="text-align:center;">
+  <p>Set or change your POLYGON wallet address for USDT payments</p>
+  <input autocomplete="off" type="text" id="eth-address-input" placeholder="Enter POL wallet address (0x...)" />
+  <div id="eth-address-error" class="error-message"></div>
+  <button id="save-eth-address" class="btn-electric">Save</button>
+</div>
+
+<div id="pools-content" class="tab-content">
+  <div id="loading">Loading mining data...</div>
+  <table class="mining-table" id="mining-table" style="display:none;">
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Blocktime</th>
+        <th>Reward</th>
+        <th>Hashrate</th>
+        <th>Price</th>
+        <th>Block Value</th>
+        <th>Mhs/hour</th>
+      </tr>
+    </thead>
+    <tbody id="mining-data"></tbody>
+  </table>
+  <br>
+  <button class="btn-electric" id="refresh-btn">Refresh Data</button>
+</div>
+
+  <div id="usdt-modal" class="modal-custom">
+    <div class="modal-content-custom">
+      <h2 id="usdt-modal-title" class="modal-title">Setting USDT Address</h2>
+      <div id="usdt-modal-body" class="modal-body"></div>
+      <div id="usdt-modal-result"></div>
+      <button id="usdt-modal-close" class="btn-electric" style="display:none;">Close</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    const usdtModal = document.getElementById('usdt-modal');
+    const usdtModalTitle = document.getElementById('usdt-modal-title');
+    const usdtModalBody = document.getElementById('usdt-modal-body');
+    const usdtModalResult = document.getElementById('usdt-modal-result');
+    const usdtModalClose = document.getElementById('usdt-modal-close');
+
+    function showUsdtSendingState() {
+      usdtModalTitle.textContent = 'Setting USDT Address';
+      usdtModalBody.innerHTML = `<p>Sending transaction...</p>`;
+      usdtModalResult.innerHTML = '';
+      usdtModalClose.style.display = 'none';
+      usdtModal.style.display = 'flex';
+    }
+
+    function showUsdtResultState(response, isSuccess) {
+      if (isSuccess) {
+        try {
+          const responseObj = typeof response === 'string' ? JSON.parse(response) : response;
+          
+          if (responseObj && responseObj.result) {
+            usdtModalTitle.textContent = 'Address Set Successfully';
+            usdtModalBody.innerHTML = `<p>Your USDT address has been set successfully.</p>`;
+            usdtModalResult.innerHTML = `
+              <p class="transaction-hash">Transaction Hash:</p>
+              <p class="transaction-hash">${responseObj.result}</p>
+            `;
+          } else {
+            usdtModalTitle.textContent = 'Transaction Error';
+            usdtModalBody.innerHTML = `<p>The server responded with an unexpected format.</p>`;
+            usdtModalResult.innerHTML = `
+              <p class="error-response">Server response:</p>
+              <p class="error-response">${JSON.stringify(response)}</p>
+            `;
+          }
+        } catch (e) {
+          usdtModalTitle.textContent = 'Transaction Error';
+          usdtModalBody.innerHTML = `<p>The server response could not be processed.</p>`;
+          usdtModalResult.innerHTML = `
+            <p class="error-response">Server response:</p>
+            <p class="error-response">${response}</p>
+          `;
+        }
+      } else {
+        usdtModalTitle.textContent = 'Transaction Failed';
+        usdtModalBody.innerHTML = `<p>There was an error setting your USDT address.</p>`;
+        usdtModalResult.innerHTML = `
+          <p class="error-response">Error details:</p>
+          <p class="error-response">${response}</p>
+          <p>Please try again later.</p>
+        `;
+      }
+      
+      usdtModalClose.style.display = 'block';
+    }
+
+    function closeUsdtModal() {
+      usdtModal.style.display = 'none';
+      fetchAndDisplayMinerData();
+    }
+
+    async function sendCustomXpara(addr) {
+      showUsdtSendingState();
+	  
+      try {
+        const result = await invoke('send_transaction', { 
+          destAddress: "xP000000000000000000000000000000000000000000000000000000000000",
+          amount: 0.001, 
+          extradata: addr 
+        });
+        showUsdtResultState(result, true);
+      } catch (error) {
+        showUsdtResultState(error, false);
+      }
+      
+      fetchBalance();
+    }
+	
+    function setupTabs() {
+      const poolsTab = document.getElementById('pools-tab');
+      const statsTab = document.getElementById('stats-tab');
+      const advancedTab = document.getElementById('advanced-tab');
+      const usdtTab = document.getElementById('usdt-tab');
+      const poolsContent = document.getElementById('pools-content');
+      const statsContent = document.getElementById('stats-content');
+      const advancedContent = document.getElementById('advanced-content');
+      const usdtContent = document.getElementById('usdt-content');
+
+      poolsTab.addEventListener('click', () => {
+        poolsTab.classList.add('active');
+        statsTab.classList.remove('active');
+        advancedTab.classList.remove('active');
+        usdtTab.classList.remove('active');
+        poolsContent.classList.add('active');
+        statsContent.classList.remove('active');
+        advancedContent.classList.remove('active');
+        usdtContent.classList.remove('active');
+      });
+
+      statsTab.addEventListener('click', () => {
+        statsTab.classList.add('active');
+        poolsTab.classList.remove('active');
+        advancedTab.classList.remove('active');
+        usdtTab.classList.remove('active');
+        statsContent.classList.add('active');
+        poolsContent.classList.remove('active');
+        advancedContent.classList.remove('active');
+        usdtContent.classList.remove('active');
+      });
+
+      advancedTab.addEventListener('click', () => {
+        advancedTab.classList.add('active');
+        poolsTab.classList.remove('active');
+        statsTab.classList.remove('active');
+        usdtTab.classList.remove('active');
+        advancedContent.classList.add('active');
+        poolsContent.classList.remove('active');
+        statsContent.classList.remove('active');
+        usdtContent.classList.remove('active');
+      });
+
+      usdtTab.addEventListener('click', () => {
+        usdtTab.classList.add('active');
+        poolsTab.classList.remove('active');
+        statsTab.classList.remove('active');
+        advancedTab.classList.remove('active');
+        usdtContent.classList.add('active');
+        poolsContent.classList.remove('active');
+        statsContent.classList.remove('active');
+        advancedContent.classList.remove('active');
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupTabs();
+
+      document.getElementById('save-eth-address').addEventListener('click', () => {
+        const addr = document.getElementById('eth-address-input').value.trim();
+        document.getElementById('eth-address-error').textContent = '';
+        const ethRegex = /^0x[a-fA-F0-9]{40}$/;
+        
+        if (ethRegex.test(addr)) {
+          sendCustomXpara(addr);
+        } else {
+          document.getElementById('eth-address-error').textContent = 'Invalid address format. Must start with 0x and have 40 hexadecimal characters.';
+        }
+      });
+
+      usdtModalClose.addEventListener('click', closeUsdtModal);
+
+      usdtModal.addEventListener('click', (e) => {
+        if (e.target === usdtModal) {
+          closeUsdtModal();
+        }
+      });
+    });
+
+    function formatNumber(num) {
+      return parseFloat(num).toLocaleString('en', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 10
+      });
+    }
+
+    function calculatePoolData(pool) {
+      const reward = pool.reward / 100000000;
+      const diffRate = pool.diff / pool.blocktime;
+      const estRewardUsd = reward * pool.rewardusdt;
+      
+      return {
+        symbol: pool.symbol,
+        blocktime: pool.blocktime,
+        reward: reward,
+        diffRate: diffRate,
+        rewardUsdt: pool.rewardusdt,
+        estRewardUsdt: estRewardUsd
+      };
+    }
+
+    async function fetchAndDisplayPoolData() {
+      const loadingElement = document.getElementById('loading');
+      const tableElement = document.getElementById('mining-table');
+      const tbodyElement = document.getElementById('mining-data');
+      
+      try {
+        loadingElement.textContent = "Loading mining data...";
+        tableElement.style.display = 'none';
+        
+        const poolsData = await invoke('get_pool_data');
+        const pools = JSON.parse(poolsData);
+        
+        let tableContent = '';
+        pools.forEach(pool => {
+          const calculatedData = calculatePoolData(pool);
+          const mhsprice = formatNumber((1000000/calculatedData.diffRate)*calculatedData.estRewardUsdt*(3600/calculatedData.blocktime));
+          
+          tableContent += `
+            <tr>
+              <td>${calculatedData.symbol}</td>
+              <td>${calculatedData.blocktime}s</td>
+              <td>${calculatedData.reward} ${calculatedData.symbol}</td>
+              <td>${calculatedData.diffRate}</td>
+              <td>$${calculatedData.rewardUsdt}</td>
+              <td>$${calculatedData.estRewardUsdt}</td>
+              <td>$${mhsprice}</td>
+            </tr>
+          `;
+        });
+        
+        tbodyElement.innerHTML = tableContent;
+        loadingElement.textContent = "";
+        tableElement.style.display = 'table';
+      } catch (error) {
+        console.error('Error fetching pool data:', error);
+        loadingElement.textContent = "Error loading mining data. Please try again.";
+        tableElement.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupTabs();
+      fetchAndDisplayPoolData();
+      
+      document.getElementById('refresh-btn').addEventListener('click', fetchAndDisplayPoolData);
+    });
+  </script>
+<script>
+
+async function fetchBalance() {
+  try {
+    const balance = await invoke('fetch_outputs_and_balance');
+    const formatted = (balance / 1e8).toFixed(4);
+    document.getElementById('wallet-balance').textContent = `BALANCE: ${formatted} xPARA`;
+  } catch (error) {
+    console.error('Error fetching balance:', error);
+    document.getElementById('wallet-balance').textContent = 'BALANCE: N/A';
+  }
+}
+
+async function fetchAndDisplayMinerData() {
+  try {
+    const dataStr = await invoke('get_miner_data');
+    const data = JSON.parse(dataStr);
+
+    document.getElementById('mining-status').textContent = data.active === 1 ? "Active" : "Not Active";
+    document.getElementById('current-hashrate').textContent = `${data.hashrate} H/s`;
+	document.getElementById('usdt-address').textContent = data.usdtaddress;
+
+    document.getElementById('pending-xpara').textContent = data.pending.xpara;
+    document.getElementById('pending-usdt').textContent = data.pending.usdt;
+
+    document.getElementById('paid-xpara').textContent = data.paid.xpara;
+    document.getElementById('paid-usdt').textContent = data.paid.usdt;
+
+    const workersList = document.getElementById('workers-list');
+    workersList.innerHTML = '';
+    data.workers.forEach(worker => {
+      const li = document.createElement('li');
+      li.textContent = `${worker.name}: ${worker.hashrate} H/s`;
+      workersList.appendChild(li);
+    });
+
+  } catch (error) {
+    console.error('Error fetching miner data:', error);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetchBalance();
+  setInterval(fetchBalance, 60000);
+  fetchAndDisplayMinerData();
+  setInterval(fetchAndDisplayMinerData, 60000);
+});
+
+
+</script>
+
+</body>
+</html>

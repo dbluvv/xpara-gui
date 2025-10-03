@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Staking App</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0a0a;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #e0fdfd;
+    }
+
+    a { text-decoration: none; }
+    a:hover { text-decoration: none; }
+
+    header {
+      background: #0a0a0a;
+      border-bottom: 1px solid #033;
+      box-shadow: 0 0 10px rgba(0,255,255,0.15);
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-electric {
+      display: inline-block;
+      border: 1px solid #00e0e0;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #e0fdfd;
+      background: #111;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-electric:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    }
+
+    #wallet-balance {
+      font-size: 1.1rem;
+      color: #00e0e0;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #00e0e0;
+      text-shadow: 0 0 8px #00ffff;
+    }
+
+    .stats-container {
+      margin-top: 2rem;
+      text-align: left;
+      padding: 1rem;
+      border: 1px solid #033;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .stat-item {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .stat-label {
+      color: #00e0e0;
+      display: inline-block;
+      width: 200px;
+      font-weight: bold;
+    }
+
+    .stat-value {
+      color: #e0fdfd;
+    }
+
+    .tab-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #00e0e0;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tab-btn.active {
+      border-bottom: 2px solid #00e0e0;
+      color: #00e0e0;
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: #00ffff;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    #loading-staking {
+      font-size: 1.1rem;
+      margin: 2rem 0;
+      color: #00e0e0;
+    }
+
+    .node-link {
+      color: #00e0e0;
+      text-decoration: underline;
+      margin-top: 1rem;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="xpara.html" class="btn-electric">← Back</a>
+      <button id="send-btn" class="btn-electric">Send</button>
+	  <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
+      <a href="receive.html" id="recv-btn" class="btn-electric">Receive</a>
+      <button id="view-keys-btn" class="btn-electric">Keys</button>
+    </nav>
+    <div>
+      <span id="wallet-balance">BALANCE: 0 xPARA</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="title">xPARA STAKING</h1>
+    <div class="tab-container">
+      <button id="staking-tab" class="tab-btn active">STAKING</button>
+      <button id="config-tab" class="tab-btn">NODE CONFIGURATION</button>
+    </div>
+
+    <div id="staking-content" class="tab-content active">
+      <div id="loading-staking">Loading staking data...</div>
+      <div class="stats-container" id="staking-stats">
+        <div class="stat-item">
+          <span class="stat-label">Staked Amount:</span>
+          <span class="stat-value" id="staked-amount">0</span> xPARA
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Pending to stake:</span>
+          <span class="stat-value" id="pending-stake">0</span> xPARA
+        </div>
+      </div><br>
+      <button class="btn-electric" id="refresh-staking-btn">REFRESH DATA</button>
+    </div>
+
+    <div id="config-content" class="tab-content">
+      <div class="stats-container" style="display: block;">
+        <a href="https://xpara.site/node.html" class="node-link" target="_blank">More info here</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    function setupTabs() {
+      const stakingTab = document.getElementById('staking-tab');
+      const configTab = document.getElementById('config-tab');
+      const stakingContent = document.getElementById('staking-content');
+      const configContent = document.getElementById('config-content');
+
+      stakingTab.addEventListener('click', () => {
+        stakingTab.classList.add('active');
+        configTab.classList.remove('active');
+        stakingContent.classList.add('active');
+        configContent.classList.remove('active');
+      });
+
+      configTab.addEventListener('click', () => {
+        configTab.classList.add('active');
+        stakingTab.classList.remove('active');
+        configContent.classList.add('active');
+        stakingContent.classList.remove('active');
+      });
+    }
+
+    async function fetchBalance() {
+      try {
+        const balance = await invoke('fetch_outputs_and_balance');
+        const formatted = (balance / 1e8).toFixed(4);
+        document.getElementById('wallet-balance').textContent = `BALANCE: ${formatted} xPARA`;
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        document.getElementById('wallet-balance').textContent = 'BALANCE: N/A';
+      }
+    }
+
+    async function fetchStakingData() {
+      try {
+        const loadingElement = document.getElementById('loading-staking');
+        const statsContainer = document.getElementById('staking-stats');
+        loadingElement.textContent = "Loading staking data...";
+        statsContainer.style.display = "none";
+
+        const [staked, pending] = await invoke('fetch_staking');
+
+        document.getElementById('staked-amount').textContent = staked / 100000000;
+        document.getElementById('pending-stake').textContent = pending / 100000000;
+
+        statsContainer.style.display = "block";
+        loadingElement.textContent = "";
+      } catch (error) {
+        console.error('Error fetching staking data:', error);
+        document.getElementById('loading-staking').textContent = "Error loading staking data. Please try again.";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupTabs();
+      fetchStakingData();
+      fetchBalance();
+      setInterval(fetchBalance, 60000);
+      document.getElementById('refresh-staking-btn').addEventListener('click', fetchStakingData);
+    });
+  </script>
+</body>
+</html>

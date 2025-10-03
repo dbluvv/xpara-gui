@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Staking App - Receive</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0a0a;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #e0fdfd;
+    }
+
+    a { text-decoration: none; }
+    a:hover { text-decoration: none; }
+
+    header {
+      background: #0a0a0a;
+      border-bottom: 1px solid #033;
+      box-shadow: 0 0 10px rgba(0,255,255,0.15);
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header nav { display: flex; gap: 0.5rem; }
+
+    .btn-electric {
+      display: inline-block;
+      border: 1px solid #00e0e0;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #e0fdfd;
+      background: #111;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-electric:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    }
+
+    #wallet-balance {
+      font-size: 1.1rem;
+      color: #00e0e0;
+      font-weight: bold;
+    }
+
+    .container { padding: 2rem; text-align: center; }
+
+    .title { font-size: 2rem; margin-bottom: 2rem; color: #00e0e0; text-shadow: 0 0 8px #00ffff; }
+
+    .key-display { margin-bottom: 2rem; border: 1px solid #033; padding: 1rem; border-radius: 8px; text-align: left; }
+
+    .key-label { font-size: 1.1rem; margin-bottom: 0.5rem; color: #00e0e0; font-weight: bold; }
+
+    .key-value { word-break: break-all; font-size: 1rem; color: #e0fdfd; }
+
+    #qrcode { display: block; margin: 1rem auto; }
+
+    .address-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    #polygon-address {
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      background: #111;
+      border: 1px solid #00e0e0;
+      border-right: none;
+      border-radius: 6px 0 0 6px;
+      color: #e0fdfd;
+      text-align: center;
+      word-break: break-all;
+      min-width: 200px;
+    }
+
+    .btn-copy {
+      background: #00e0e0;
+      color: #0a0a0a;
+      border: 1px solid #00e0e0;
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      box-shadow: 0 0 8px rgba(0,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0.8rem;
+    }
+
+    .modal-custom {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content-custom {
+      background: #0a0a0a;
+      border: 2px solid #00e0e0;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 450px;
+      text-align: center;
+      box-shadow: 0 0 12px rgba(0,255,255,0.3);
+    }
+	
+	#qrcode-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+
+    .modal-title { font-size: 1.5rem; margin-bottom: 1rem; color: #00e0e0; }
+    .modal-body { margin-bottom: 1rem; color: #e0fdfd; }
+
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="xpara.html" class="btn-electric">← Back</a>
+      <button id="send-btn" class="btn-electric">Send</button>
+      <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
+      <a href="receive.html" id="recv-btn" class="btn-electric">Receive</a>
+      <button id="view-keys-btn" class="btn-electric">Keys</button>
+    </nav>
+    <div>
+      <span id="wallet-balance">BALANCE: 0 xPARA</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="title">RECEIVE xPARA FROM POLYGON NETWORK</h1>
+
+    <div class="key-display">
+      <div class="key-label">Instructions:</div>
+      <div class="key-value">
+        To send your xPARA from the POLYGON network, send them to the address below and you will receive them in your wallet within ~240 minutes.
+      </div>
+    </div>
+
+    <div class="key-display" style="text-align:center;">
+      <div class="key-label">ADDRESS:</div>
+      <div id="qrcode-container">
+        <div id="qrcode"></div>
+      </div>
+      <div class="address-container">
+        <div id="polygon-address">Loading address...</div>
+        <button id="copy-address-btn" class="btn-copy">📋</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="copy-modal" class="modal-custom">
+    <div class="modal-content-custom">
+      <div class="modal-title" id="copy-modal-title">Message</div>
+      <div class="modal-body" id="copy-modal-body">Body</div>
+      <button id="copy-modal-ok" class="btn-electric modal-btn">OK</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    async function fetchBalance() {
+      try {
+        const balance = await invoke('fetch_outputs_and_balance');
+        const formatted = (balance / 1e8).toFixed(4);
+        document.getElementById('wallet-balance').textContent = `BALANCE: ${formatted} xPARA`;
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        document.getElementById('wallet-balance').textContent = 'BALANCE: N/A';
+      }
+    }
+
+    async function fetchPolygon() {
+      try {
+        const polygon_address = await invoke('fetch_polygon');
+        const addressEl = document.getElementById('polygon-address');
+        addressEl.textContent = polygon_address;
+
+        new QRCode(document.getElementById("qrcode"), {
+          text: polygon_address,
+          width: 200,
+          height: 200,
+          colorDark: "#00e0e0",
+          colorLight: "#0a0a0a",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      } catch (error) {
+        console.error('Error fetching polygon:', error);
+      }
+    }
+
+    const copyModal = document.getElementById('copy-modal');
+    const copyModalTitle = document.getElementById('copy-modal-title');
+    const copyModalBody = document.getElementById('copy-modal-body');
+    const copyModalOk = document.getElementById('copy-modal-ok');
+
+    function showCopyModal(title, body) {
+      copyModalTitle.textContent = title;
+      copyModalBody.textContent = body;
+      copyModal.style.display = 'flex';
+    }
+
+    copyModalOk.addEventListener('click', () => { copyModal.style.display = 'none'; });
+    copyModal.addEventListener('click', (e) => { if(e.target === copyModal) copyModal.style.display = 'none'; });
+
+    const copyBtn = document.getElementById('copy-address-btn');
+    copyBtn.addEventListener('click', () => {
+      const addressText = document.getElementById('polygon-address').textContent;
+      if (!addressText || addressText === "Loading address...") {
+        showCopyModal("Error", "Address not available");
+        return;
+      }
+      navigator.clipboard.writeText(addressText)
+        .then(() => showCopyModal("Copied", "Address copied to clipboard"))
+        .catch(err => showCopyModal("Error", "Failed to copy: " + err));
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchBalance();
+      fetchPolygon();
+      setInterval(fetchBalance, 60000);
+    });
+  </script>
+</body>
+</html>
