@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tokens - xPARA Wallet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0a0a;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #e0fdfd;
+    }
+
+    a { text-decoration: none; }
+    a:hover { text-decoration: none; }
+
+    header {
+      background: #0a0a0a;
+      border-bottom: 1px solid #033;
+      box-shadow: 0 0 10px rgba(0,255,255,0.15);
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-electric {
+      display: inline-block;
+      border: 1px solid #00e0e0;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #e0fdfd;
+      background: #111;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-electric:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    }
+
+    #wallet-balance {
+      font-size: 1.1rem;
+      color: #00e0e0;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #00e0e0;
+      text-shadow: 0 0 8px #00ffff;
+      text-align: center;
+    }
+
+    .tokens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    .token-card {
+      background: rgba(20, 20, 30, 0.7);
+      border: 1px solid #033;
+      border-radius: 10px;
+      padding: 1.2rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .token-card:hover {
+      border-color: #00e0e0;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .token-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #033;
+    }
+
+    .token-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #00e0e0;
+    }
+
+    .token-symbol {
+      background: rgba(0, 224, 224, 0.1);
+      padding: 0.2rem 0.6rem;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      color: #00e0e0;
+      font-weight: bold;
+    }
+
+    .token-info {
+      margin-bottom: 0.8rem;
+    }
+
+    .token-label {
+      color: #8afcfc;
+      font-size: 0.9rem;
+      margin-bottom: 0.2rem;
+      opacity: 0.8;
+    }
+
+    .token-value {
+      color: #e0fdfd;
+      font-size: 1.1rem;
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    .token-balance {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #033;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .token-balance-amount {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00e0e0;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+      margin-bottom: 1rem;
+    }
+
+    .token-actions {
+      margin-top: auto;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .token-send-btn {
+      background: rgba(0, 224, 224, 0.1);
+      border: 1px solid #00e0e0;
+      color: #00e0e0;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      flex-grow: 1;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    .token-send-btn:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .no-tokens {
+      text-align: center;
+      padding: 3rem;
+      color: #8afcfc;
+      font-size: 1.2rem;
+      grid-column: 1 / -1;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .refresh-btn {
+      background: none;
+      border: 1px solid #00e0e0;
+      color: #00e0e0;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+      background: rgba(0, 224, 224, 0.1);
+    }
+
+    .refresh-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .token-count {
+      color: #00e0e0;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #00e0e0;
+      font-size: 1.2rem;
+      grid-column: 1 / -1;
+    }
+
+    .loading::after {
+      content: '...';
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { content: '.'; }
+      40% { content: '..'; }
+      60%, 100% { content: '...'; }
+    }
+
+    .error-message {
+      background: rgba(255, 50, 50, 0.1);
+      border: 1px solid #ff3333;
+      border-radius: 8px;
+      padding: 1rem;
+      color: #ff6666;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      grid-column: 1 / -1;
+    }
+
+    .token-id {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.5rem;
+      word-break: break-all;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .token-id:hover::after {
+      content: 'Click to copy';
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      background: rgba(0, 0, 0, 0.8);
+      color: #00e0e0;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .tokens-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+      
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+		    .balance-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .balance-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(0, 224, 224, 0.1) 0%, rgba(10, 10, 10, 0.9) 100%);
+      border: 1px solid #00e0e0;
+      border-radius: 10px;
+      padding: 0.4rem 0.8rem;
+      color: #e0fdfd;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: default;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .balance-btn:hover {
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      background: linear-gradient(135deg, rgba(0, 224, 224, 0.15) 0%, rgba(10, 10, 10, 0.95) 100%);
+      transform: translateY(-1px);
+    }
+
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.5));
+      transition: transform 0.3s ease;
+    }
+
+    .balance-btn:hover .logo-icon {
+      transform: rotate(5deg) scale(1.1);
+    }
+
+    .balance-amount {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #00e0e0;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .balance-loading {
+      color: #8afcfc;
+      font-style: italic;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="xpara.html" class="btn-electric">← Back</a>
+	  <a href="tokens.html" id="recv-btn" class="btn-electric">Tokens</a>
+      <button id="send-btn" class="btn-electric">Send</button>
+      <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
+      <a href="receive.html" id="recv-btn" class="btn-electric">Receive</a>
+      <button id="view-keys-btn" class="btn-electric">Keys</button>
+    </nav>
+    <div class="balance-container">
+      <div class="balance-btn" id="wallet-balance-btn">
+        <img src="/assets/logo.png" alt="xPARA Logo" class="logo-icon" id="logo-img" style="margin-right: 4px;">
+        <span class="balance-amount" id="balance-amount">0.0000</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="title">TOKEN BALANCES</h1>
+    
+    <div class="controls">
+      <div class="token-count">
+        Tokens: <span id="token-count">0</span>
+      </div>
+      <button id="refresh-tokens-btn" class="refresh-btn">
+        REFRESH TOKENS
+      </button>
+    </div>
+
+    <div class="tokens-grid" id="tokens-container">
+      <div class="loading">Loading tokens</div>
+    </div>
+  </div>
+<script src="main.js"></script>
+  <script>
+    let tokens = [];
+
+    function formatBalance(balance, decimals) {
+      const decimalCount = parseInt(decimals) || 0;
+      const divisor = Math.pow(10, decimalCount);
+      const amount = parseFloat(balance) / divisor;
+      
+      // Format with appropriate decimal places
+      if (decimalCount === 0) {
+        return amount.toLocaleString('en-US', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        });
+      } else if (decimalCount <= 4) {
+        return amount.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 4
+        });
+      } else if (decimalCount <= 8) {
+        return amount.toLocaleString('en-US', {
+          minimumFractionDigits: 4,
+          maximumFractionDigits: 8
+        });
+      } else {
+        return amount.toLocaleString('en-US', {
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 12
+        });
+      }
+    }
+
+    function truncateTokenId(tokenId) {
+      if (tokenId.length <= 16) return tokenId;
+      return tokenId.substring(0, 8) + '...' + tokenId.substring(tokenId.length - 8);
+    }
+
+    function renderTokens() {
+      const container = document.getElementById('tokens-container');
+      const countElement = document.getElementById('token-count');
+      
+      if (!tokens || tokens.length === 0) {
+        container.innerHTML = `
+          <div class="no-tokens">
+            No tokens found for this wallet address.<br>
+            Try refreshing or check if you have any token holdings.
+          </div>
+        `;
+        countElement.textContent = '0';
+        return;
+      }
+
+      countElement.textContent = tokens.length.toString();
+
+      container.innerHTML = tokens.map(token => `
+        <div class="token-card">
+          <div class="token-header">
+            <div class="token-name">${token.name || 'Unnamed Token'}</div>
+            <div class="token-symbol">${token.symbol || 'TOKEN'}</div>
+          </div>
+          
+          <div class="token-info">
+            <div class="token-label">Token ID:</div>
+            <div class="token-value">${truncateTokenId(token.tokenid)}</div>
+            <!--<div class="token-id" title="${token.tokenid}" onclick="copyToClipboard('${token.tokenid}')">
+              ${token.tokenid}
+            </div>-->
+          </div>
+          
+          <!--<div class="token-info">
+            <div class="token-label">Address:</div>
+            <div class="token-value" style="font-size: 0.85rem;">${token.address}</div>
+          </div>
+          
+          <div class="token-info">
+            <div class="token-label">Decimals:</div>
+            <div class="token-value">${token.decimals || '0'}</div>
+          </div>-->
+          
+          <div class="token-balance">
+            <div class="token-label">BALANCE:</div>
+            <div class="token-balance-amount">${formatBalance(token.balance, token.decimals)}</div>
+            
+            <div class="token-actions">
+              <a href="token.html?id=${encodeURIComponent(token.tokenid)}" class="token-send-btn">
+                SEND TOKEN
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = document.activeElement.textContent;
+        document.activeElement.textContent = 'Copied!';
+        document.activeElement.style.color = '#00e0e0';
+        
+        setTimeout(() => {
+          document.activeElement.textContent = originalText;
+          document.activeElement.style.color = '';
+        }, 1500);
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
+
+    function showError(message) {
+      const container = document.getElementById('tokens-container');
+      container.innerHTML = `
+        <div class="error-message">
+          <strong>Error:</strong> ${message}<br>
+          Please check your connection and try again.
+        </div>
+      `;
+    }
+
+    async function fetchTokens() {
+      const container = document.getElementById('tokens-container');
+      const refreshBtn = document.getElementById('refresh-tokens-btn');
+      
+      try {
+        container.innerHTML = '<div class="loading">Loading tokens</div>';
+        refreshBtn.disabled = true;
+        refreshBtn.textContent = 'LOADING...';
+        
+        tokens = await invoke('fetch_token_balances');
+        renderTokens();
+        
+      } catch (error) {
+        console.error('Error fetching tokens:', error);
+        showError(error.toString());
+      } finally {
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = 'REFRESH TOKENS';
+      }
+    }
+
+    async function fetchBalance() {
+	  const balanceBtn = document.getElementById('wallet-balance-btn');
+      try {
+        const balance = await invoke('fetch_outputs_and_balance');
+        const formatted = (balance / 1e8).toFixed(4);
+        document.getElementById('balance-amount').textContent = formatted;
+        document.getElementById('balance-amount').classList.remove('balance-loading');
+        balanceBtn.title = `${formatted} xPARA`;
+        
+        if (balance === 0) {
+          balanceBtn.style.opacity = '0.7';
+        } else {
+          balanceBtn.style.opacity = '1';
+        }
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        document.getElementById('balance-amount').textContent = 'N/A';
+        document.getElementById('balance-amount').classList.add('balance-loading');
+        balanceBtn.title = 'Error loading balance';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchTokens();
+      fetchBalance();
+      setInterval(fetchBalance, 60000);
+      
+      document.getElementById('refresh-tokens-btn').addEventListener('click', fetchTokens);
+    });
+  </script>
+</body>
+</html>

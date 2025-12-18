@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Send Token - xPARA Wallet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0a0a;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #e0fdfd;
+    }
+
+    a { text-decoration: none; }
+    a:hover { text-decoration: none; }
+
+    header {
+      background: #0a0a0a;
+      border-bottom: 1px solid #033;
+      box-shadow: 0 0 10px rgba(0,255,255,0.15);
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-electric {
+      display: inline-block;
+      border: 1px solid #00e0e0;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #e0fdfd;
+      background: #111;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-electric:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    }
+
+    #wallet-balance {
+      font-size: 1.1rem;
+      color: #00e0e0;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .title {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #00e0e0;
+      text-shadow: 0 0 8px #00ffff;
+      text-align: center;
+    }
+
+    .token-info-card {
+      background: rgba(20, 20, 30, 0.7);
+      border: 1px solid #033;
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .token-info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #033;
+    }
+
+    .token-label {
+      color: #8afcfc;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .token-value {
+      color: #e0fdfd;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: right;
+      max-width: 70%;
+      word-break: break-all;
+    }
+
+    .token-balance-large {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #00e0e0;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+      text-align: center;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(0, 224, 224, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(0, 224, 224, 0.2);
+    }
+
+    .send-form {
+      background: rgba(20, 20, 30, 0.7);
+      border: 1px solid #033;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-label {
+      display: block;
+      color: #00e0e0;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.8rem;
+      background: #111;
+      border: 1px solid #00e0e0;
+      color: #e0fdfd;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-shadow: 0 0 5px rgba(0,255,255,0.2);
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #00ffff;
+      box-shadow: 0 0 8px rgba(0,255,255,0.3);
+    }
+
+    .error-message {
+      color: #ff3333;
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+      height: 1.2rem;
+    }
+
+    .form-hint {
+      color: #8afcfc;
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+      opacity: 0.7;
+    }
+
+    .modal-custom {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(10, 10, 10, 0.95);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content-custom {
+      background-color: #111;
+      border: 1px solid #00e0e0;
+      border-radius: 10px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,255,255,0.4);
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #00e0e0;
+      text-shadow: 0 0 5px #00ffff;
+    }
+
+    .modal-body {
+      font-size: 1rem;
+      color: #e0fdfd;
+      margin-bottom: 1.5rem;
+      word-break: break-all;
+      text-align: left;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .modal-btn {
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: bold;
+      text-transform: uppercase;
+      min-width: 120px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-confirm {
+      background: #00e0e0;
+      color: #0a0a0a;
+      border: none;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
+    }
+
+    .btn-confirm:hover {
+      background: #00ffff;
+      box-shadow: 0 0 15px rgba(0,255,255,0.5);
+    }
+
+    .btn-cancel {
+      background: #111;
+      color: #00e0e0;
+      border: 1px solid #00e0e0;
+      box-shadow: 0 0 5px rgba(0,255,255,0.2);
+    }
+
+    .btn-cancel:hover {
+      background: rgba(0, 224, 224, 0.1);
+    }
+
+    .btn-close-modal {
+      margin-top: 1.5rem;
+      background: #00e0e0;
+      color: #0a0a0a;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-close-modal:hover {
+      background: #00ffff;
+    }
+
+    .transaction-hash {
+      color: #00ff66;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    .error-response {
+      color: #ff3333;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    .message-data {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1rem;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 224, 224, 0.3);
+      margin: 1rem 0;
+      font-family: monospace;
+      font-size: 0.9rem;
+      text-align: left;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    .max-btn {
+      background: rgba(0, 224, 224, 0.1);
+      border: 1px solid #00e0e0;
+      color: #00e0e0;
+      padding: 0.3rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .max-btn:hover {
+      background: #00e0e0;
+      color: #0a0a0a;
+    }
+
+    .input-with-max {
+      display: flex;
+      align-items: center;
+    }
+
+    .input-with-max input {
+      flex-grow: 1;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .modal-content-custom {
+        width: 95%;
+        padding: 1.5rem;
+      }
+      
+      .modal-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .modal-btn {
+        width: 100%;
+      }
+    }
+	
+		    .balance-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .balance-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(0, 224, 224, 0.1) 0%, rgba(10, 10, 10, 0.9) 100%);
+      border: 1px solid #00e0e0;
+      border-radius: 10px;
+      padding: 0.4rem 0.8rem;
+      color: #e0fdfd;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: default;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .balance-btn:hover {
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      background: linear-gradient(135deg, rgba(0, 224, 224, 0.15) 0%, rgba(10, 10, 10, 0.95) 100%);
+      transform: translateY(-1px);
+    }
+
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.5));
+      transition: transform 0.3s ease;
+    }
+
+    .balance-btn:hover .logo-icon {
+      transform: rotate(5deg) scale(1.1);
+    }
+
+    .balance-amount {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #00e0e0;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .balance-loading {
+      color: #8afcfc;
+      font-style: italic;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="xpara.html" class="btn-electric">← Back</a>
+	  <a href="tokens.html" id="recv-btn" class="btn-electric">Tokens</a>
+      <button id="send-btn" class="btn-electric">Send</button>
+      <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
+      <a href="receive.html" id="recv-btn" class="btn-electric">Receive</a>
+      <button id="view-keys-btn" class="btn-electric">Keys</button>
+    </nav>
+    <div class="balance-container">
+      <div class="balance-btn" id="wallet-balance-btn">
+        <img src="/assets/logo.png" alt="xPARA Logo" class="logo-icon" id="logo-img" style="margin-right: 4px;">
+        <span class="balance-amount" id="balance-amount">0.0000</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="title" id="page-title">Send Token</h1>
+    
+    <div class="token-info-card" id="token-info">
+      <div class="loading">Loading token information...</div>
+    </div>
+
+    <div class="send-form" id="send-form" style="display: none;">
+      <div class="form-group">
+        <label class="form-label">Destination Address</label>
+        <input type="text" id="address-input" class="form-input" placeholder="xP..." autocomplete="off" />
+        <div id="address-error" class="error-message"></div>
+        <div class="form-hint">Must start with "xP" and be 64 characters long</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Amount to Send</label>
+        <div class="input-with-max">
+          <input type="number" step="any" id="amount-input" class="form-input" placeholder="0.0" autocomplete="off" />
+          <button id="max-btn" class="max-btn">MAX</button>
+        </div>
+        <div id="amount-error" class="error-message"></div>
+        <div id="amount-hint" class="form-hint"></div>
+      </div>
+
+      <button id="token-send-btn" class="btn-electric" style="width: 100%; padding: 0.8rem; font-size: 1.1rem;">
+        SEND TOKEN
+      </button>
+    </div>
+
+    <div id="no-token" style="display: none; text-align: center; padding: 2rem; color: #ff6666;">
+      <h3>Token not found</h3>
+      <p>This token is not in your wallet or the token ID is invalid.</p>
+      <a href="tokens.html" class="btn-electric" style="margin-top: 1rem;">Back to Tokens</a>
+    </div>
+  </div>
+
+  <div id="transaction-modal" class="modal-custom">
+    <div class="modal-content-custom">
+      <h2 id="modal-title" class="modal-title">Confirm Token Transfer</h2>
+      <div id="modal-body" class="modal-body">
+        <div id="modal-token-info"></div>
+        <div id="modal-message-data" class="message-data"></div>
+      </div>
+      <div id="modal-buttons" class="modal-buttons">
+        <button id="modal-confirm" class="modal-btn btn-confirm">Confirm Send</button>
+        <button id="modal-cancel" class="modal-btn btn-cancel">Cancel</button>
+      </div>
+      <div id="modal-result"></div>
+      <button id="modal-close" class="btn-close-modal" style="display:none;">Close</button>
+    </div>
+  </div>
+  
+  <script src="main.js"></script>
+
+  <script>
+    let tokenData = null;
+    let tokenBalance = 0;
+    let decimals = 0;
+    let currentWalletBalance = 0;
+    let tokenId = null;
+
+    const transactionModal = document.getElementById('transaction-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const modalTokenInfo = document.getElementById('modal-token-info');
+    const modalMessageData = document.getElementById('modal-message-data');
+    const modalConfirm = document.getElementById('modal-confirm');
+    const modalCancel = document.getElementById('modal-cancel');
+    const modalClose = document.getElementById('modal-close');
+    const modalButtons = document.getElementById('modal-buttons');
+    const modalResult = document.getElementById('modal-result');
+
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    function validateXparaAddress(address) {
+      return /^xP[a-fA-F0-9]{62}$/.test(address);
+    }
+
+    function formatBalance(balance, decimalCount) {
+      const divisor = Math.pow(10, decimalCount);
+      const amount = parseFloat(balance) / divisor;
+      
+      if (decimalCount === 0) {
+        return amount.toLocaleString('en-US', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        });
+      } else if (decimalCount <= 4) {
+        return amount.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 4
+        });
+      } else if (decimalCount <= 8) {
+        return amount.toLocaleString('en-US', {
+          minimumFractionDigits: 4,
+          maximumFractionDigits: 8
+        });
+      } else {
+        return amount.toLocaleString('en-US', {
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 12
+        });
+      }
+    }
+
+    function toRawAmount(amount, decimalCount) {
+      const multiplier = Math.pow(10, decimalCount);
+      return Math.floor(amount * multiplier);
+    }
+
+    function truncate(str, length = 12) {
+      if (str.length <= length) return str;
+      return str.substring(0, length) + '...' + str.substring(str.length - length);
+    }
+
+    async function loadTokenData() {
+      tokenId = getQueryParam('id');
+      if (!tokenId) {
+        showNoToken();
+        return;
+      }
+
+      try {
+        const allTokens = await invoke('fetch_token_balances');
+        tokenData = allTokens.find(token => token.tokenid === tokenId);
+        
+        if (!tokenData) {
+          showNoToken();
+          return;
+        }
+
+        tokenBalance = parseFloat(tokenData.balance);
+        decimals = parseInt(tokenData.decimals) || 0;
+        
+        renderTokenInfo();
+        document.getElementById('send-form').style.display = 'block';
+        updateAmountHint();
+        
+      } catch (error) {
+        console.error('Error loading token data:', error);
+        showNoToken();
+      }
+    }
+
+    function showNoToken() {
+      document.getElementById('token-info').style.display = 'none';
+      document.getElementById('send-form').style.display = 'none';
+      document.getElementById('no-token').style.display = 'block';
+    }
+
+    function renderTokenInfo() {
+      const container = document.getElementById('token-info');
+      const formattedBalance = formatBalance(tokenData.balance, decimals);
+      
+      container.innerHTML = `
+        <div class="token-balance-large">
+          ${formattedBalance} ${tokenData.symbol || 'TOKEN'}
+        </div>
+        <div class="token-info-row">
+          <span class="token-label">Token Name:</span>
+          <span class="token-value">${tokenData.name || 'Unnamed Token'}</span>
+        </div>
+        <div class="token-info-row">
+          <span class="token-label">Token Symbol:</span>
+          <span class="token-value">${tokenData.symbol || 'TOKEN'}</span>
+        </div>
+        <div class="token-info-row">
+          <span class="token-label">Decimals:</span>
+          <span class="token-value">${decimals}</span>
+        </div>
+      `;
+    }
+
+    function updateAmountHint() {
+      const hint = document.getElementById('amount-hint');
+      const formattedMax = formatBalance(tokenData.balance, decimals);
+      hint.textContent = `Max: ${formattedMax} ${tokenData.symbol || 'TOKEN'}`;
+    }
+
+    function showConfirmationModal(address, amount) {
+      const rawAmount = toRawAmount(amount, decimals);
+      const formattedAmount = formatBalance(rawAmount.toString(), decimals);
+      
+      const messageData = {
+        method: "send",
+        to: address,
+        amount: rawAmount
+      };
+      
+      modalTitle.textContent = `Send ${tokenData.symbol || 'Token'}`;
+      modalTokenInfo.innerHTML = `
+        <p><strong>Token:</strong> ${tokenData.name || 'Unnamed Token'} (${tokenData.symbol || 'TOKEN'})</p>
+        <p><strong>To Address:</strong> ${address}</p>
+        <p><strong>Amount:</strong> ${formattedAmount} ${tokenData.symbol || 'TOKEN'}</p>
+        <p><strong>Raw Amount:</strong> ${rawAmount} (with ${decimals} decimals)</p>
+      `;
+      
+      modalMessageData.textContent = JSON.stringify(messageData, null, 2);
+      
+      modalResult.innerHTML = '';
+      modalButtons.style.display = 'flex';
+      modalClose.style.display = 'none';
+      transactionModal.style.display = 'flex';
+    }
+
+    function showSendingState() {
+      modalTitle.textContent = 'Sending Token Transfer';
+      modalTokenInfo.innerHTML = `<p>Creating and broadcasting transaction...</p>`;
+      modalMessageData.style.display = 'none';
+      modalResult.innerHTML = '';
+      modalButtons.style.display = 'none';
+      modalClose.style.display = 'none';
+    }
+
+    function showResultState(response, isSuccess) {
+      modalMessageData.style.display = 'none';
+      
+      if (isSuccess) {
+        try {
+          const responseObj = typeof response === 'string' ? JSON.parse(response) : response;
+          if (responseObj && responseObj.result) {
+            modalTitle.textContent = 'Token Transfer Sent';
+            modalTokenInfo.innerHTML = `
+              <p>Your token transfer has been sent successfully.</p>
+              <p>The message has been encoded in the transaction extra data.</p>
+            `;
+            modalResult.innerHTML = `
+              <p style="color: #00e0e0; font-weight: bold;">Transaction Hash:</p>
+              <p class="transaction-hash">${responseObj.result}</p>
+            `;
+          } else {
+            modalTitle.textContent = 'Transaction Error';
+            modalTokenInfo.innerHTML = `<p>Unexpected server response format.</p>`;
+            modalResult.innerHTML = `<p class="error-response">${JSON.stringify(response)}</p>`;
+          }
+        } catch(e) {
+          modalTitle.textContent = 'Transaction Error';
+          modalTokenInfo.innerHTML = `<p>Server response could not be processed.</p>`;
+          modalResult.innerHTML = `<p class="error-response">${response}</p>`;
+        }
+      } else {
+        modalTitle.textContent = 'Transaction Failed';
+        modalTokenInfo.innerHTML = `<p>Error sending token transfer.</p>`;
+        modalResult.innerHTML = `<p class="error-response">${response}</p>`;
+      }
+      modalButtons.style.display = 'none';
+      modalClose.style.display = 'block';
+    }
+
+    function closeModal() {
+      transactionModal.style.display = 'none';
+      modalMessageData.style.display = 'block';
+    }
+
+    async function sendToken() {
+      document.getElementById('address-error').textContent = '';
+      document.getElementById('amount-error').textContent = '';
+
+      let address = document.getElementById('address-input').value.trim();
+      const amount = parseFloat(document.getElementById('amount-input').value.trim());
+      let valid = true;
+
+      if (!validateXparaAddress(address)) {
+        document.getElementById('address-error').textContent = 'Invalid xPARA address. Must start with "xP" and be 64 characters.';
+        valid = false;
+      }
+      
+      if (address.length > 64) {
+        document.getElementById('address-error').textContent = 'Address too long. Remove any message ID suffix.';
+        valid = false;
+      }
+
+      if (isNaN(amount) || amount <= 0) {
+        document.getElementById('amount-error').textContent = 'Amount must be a positive number';
+        valid = false;
+      }
+
+      const rawAmount = toRawAmount(amount, decimals);
+      if (rawAmount > tokenBalance) {
+        const maxAmount = formatBalance(tokenBalance.toString(), decimals);
+        document.getElementById('amount-error').textContent = `Insufficient token balance. Max: ${maxAmount}`;
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      showConfirmationModal(address, amount);
+
+      return new Promise((resolve) => {
+        modalConfirm.onclick = async () => {
+          showSendingState();
+          try {
+            const messageData = {
+              method: "send",
+              to: address,
+              amount: rawAmount
+            };
+            
+            const messageJson = JSON.stringify(messageData);
+            const destAddress = tokenData.tokenid;
+            const extradata = messageJson;
+            
+            const result = await invoke('send_transaction', { 
+              destAddress, 
+              amount: 0,
+              extradata 
+            });
+            
+            showResultState(result, true);
+            document.getElementById('address-input').value = '';
+            document.getElementById('amount-input').value = '';
+            
+            setTimeout(async () => {
+              await loadTokenData();
+            }, 1000);
+            
+          } catch (error) {
+            showResultState(error, false);
+          }
+          resolve();
+        };
+        modalCancel.onclick = () => { closeModal(); resolve(); };
+      });
+    }
+
+    async function fetchBalance() {
+	  const balanceBtn = document.getElementById('wallet-balance-btn');
+      try {
+        const balance = await invoke('fetch_outputs_and_balance');
+        const formatted = (balance / 1e8).toFixed(4);
+        document.getElementById('balance-amount').textContent = formatted;
+        document.getElementById('balance-amount').classList.remove('balance-loading');
+        balanceBtn.title = `${formatted} xPARA`;
+        
+        if (balance === 0) {
+          balanceBtn.style.opacity = '0.7';
+        } else {
+          balanceBtn.style.opacity = '1';
+        }
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        document.getElementById('balance-amount').textContent = 'N/A';
+        document.getElementById('balance-amount').classList.add('balance-loading');
+        balanceBtn.title = 'Error loading balance';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTokenData();
+      await fetchBalance();
+      
+      document.getElementById('token-send-btn').addEventListener('click', sendToken);
+      document.getElementById('max-btn').addEventListener('click', () => {
+        const maxAmount = formatBalance(tokenData.balance, decimals);
+        document.getElementById('amount-input').value = maxAmount.replace(/,/g, '');
+      });
+      
+      modalClose.addEventListener('click', closeModal);
+      transactionModal.addEventListener('click', (e) => { 
+        if (e.target === transactionModal) closeModal(); 
+      });
+      
+      document.getElementById('address-input').addEventListener('input', function() {
+        if (this.value.length > 64) {
+          this.value = this.value.substring(0, 64);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

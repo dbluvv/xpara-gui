@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>uPOW Mining - Parasite Chain</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <style>
     body, html {
       margin: 0;
@@ -62,6 +63,15 @@
       color: #00e0e0;
       font-weight: bold;
     }
+	
+	.settings-next-alert {
+	  background: rgba(0, 255, 255, 0.1);
+	  border: 1px solid #00ffff;
+	  color: #e0fdfd;
+	  border-radius: 6px;
+	  padding: 1rem;
+	  margin-bottom: 1rem;
+	}
 
     .container {
       padding: 2rem;
@@ -220,9 +230,10 @@
       color: #e0fdfd;
     }
     .transaction-hash {
-      color: #00ff99;
+      color: #00ff66;
       font-weight: bold;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
+      word-break: break-all;
     }
     .error-response {
       color: #ff4444;
@@ -233,20 +244,228 @@
       border-radius: 6px;
       padding: 0.5rem 1.5rem;
     }
+
+    /* Settings Styles */
+    .settings-container {
+      text-align: left;
+      margin: 2rem auto;
+      max-width: 600px;
+      padding: 1rem;
+      border: 1px solid #033;
+      box-shadow: 0 0 8px rgba(0,255,255,0.15);
+      border-radius: 8px;
+    }
+    .setting-group {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border: 1px solid #033;
+      border-radius: 6px;
+    }
+    .setting-title {
+      color: #00e0e0;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .info-tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+    }
+    .info-tooltip .tooltip-text {
+      visibility: hidden;
+      width: 300px;
+      background-color: #0a0a0a;
+      color: #e0fdfd;
+      border: 1px solid #00e0e0;
+      text-align: center;
+      border-radius: 6px;
+      padding: 0.5rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -150px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.9rem;
+      box-shadow: 0 0 8px rgba(0,255,255,0.3);
+    }
+    .info-tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    .payment-frequency {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .frequency-option {
+      flex: 1;
+      min-width: 120px;
+    }
+    .frequency-option input[type="radio"] {
+      display: none;
+    }
+    .frequency-option label {
+      display: block;
+      padding: 0.75rem;
+      text-align: center;
+      border: 1px solid #00e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #111;
+    }
+    .frequency-option input[type="radio"]:checked + label {
+      background: #00e0e0;
+      color: #0a0a0a;
+      box-shadow: 0 0 8px rgba(0,255,255,0.4);
+    }
+    .frequency-option label:hover {
+      background: rgba(0,224,224,0.2);
+    }
+    select {
+      font-size: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 300px;
+      background: #111;
+      border: 1px solid #00e0e0;
+      border-radius: 6px;
+      color: #e0fdfd;
+    }
+    .slider-container {
+      margin: 1.5rem 0;
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      color: #00aaff;
+    }
+    .slider-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 8px;
+      background: #111;
+      border-radius: 4px;
+      outline: none;
+      border: 1px solid #00e0e0;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #00e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0,255,255,0.4);
+    }
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #00e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0,255,255,0.4);
+      border: none;
+    }
+    .percentage-input {
+      width: 80px !important;
+      text-align: center;
+    }
+    .percentage-display {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      color: #00aaff;
+    }
 	
+	.btn-electric[style*="background: #333"]:hover {
+  background: #555 !important;
+  color: #e0fdfd !important;
+  box-shadow: 0 0 8px rgba(255,255,255,0.2);
+}
+		    .balance-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .balance-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(0, 224, 224, 0.1) 0%, rgba(10, 10, 10, 0.9) 100%);
+      border: 1px solid #00e0e0;
+      border-radius: 10px;
+      padding: 0.4rem 0.8rem;
+      color: #e0fdfd;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: default;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .balance-btn:hover {
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      background: linear-gradient(135deg, rgba(0, 224, 224, 0.15) 0%, rgba(10, 10, 10, 0.95) 100%);
+      transform: translateY(-1px);
+    }
+
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.5));
+      transition: transform 0.3s ease;
+    }
+
+    .balance-btn:hover .logo-icon {
+      transform: rotate(5deg) scale(1.1);
+    }
+
+    .balance-amount {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #00e0e0;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .balance-loading {
+      color: #8afcfc;
+      font-style: italic;
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
   <header>
     <nav>
       <a href="xpara.html" class="btn-electric">← Back</a>
+	  <a href="tokens.html" id="recv-btn" class="btn-electric">Tokens</a>
       <button id="send-btn" class="btn-electric">Send</button>
-	  <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
+      <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
       <a href="receive.html" id="recv-btn" class="btn-electric">Receive</a>
       <button id="view-keys-btn" class="btn-electric">Keys</button>
     </nav>
-    <div>
-      <span id="wallet-balance">BALANCE: 0 xPARA</span>
+    <div class="balance-container">
+      <div class="balance-btn" id="wallet-balance-btn">
+        <img src="/assets/logo.png" alt="xPARA Logo" class="logo-icon" id="logo-img" style="margin-right: 4px;">
+        <span class="balance-amount" id="balance-amount">0.0000</span>
+      </div>
     </div>
   </header>
 
@@ -255,9 +474,92 @@
     <div class="tab-container">
 	  <button id="stats-tab" class="tab-btn active">My Stats</button>
 	  <button id="advanced-tab" class="tab-btn">Mining HowTo</button>
+	  <button id="settings-tab" class="tab-btn">Settings</button>
 	  <button id="usdt-tab" class="tab-btn">USDT Address</button>
 	  <button id="pools-tab" class="tab-btn">Pools</button>
 	</div>
+
+    <!-- Settings Tab Content -->
+    <div id="settings-content" class="tab-content">
+      <div class="settings-container">
+	    <div class="alert alert-info" style="background: rgba(0, 224, 224, 0.1); border: 1px solid #00e0e0; color: #e0fdfd; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem;">
+		  <strong>Note:</strong> The configuration requires the transaction to be written to the blockchain. Please wait a few minutes to see the changes. If you have never set these options before, changes will apply instantly. If you are updating existing settings, your changes will take 14,400 blocks (approximately 10 days) to become effective.
+		</div>
+        <!-- Payment Frequency Setting -->
+        <div class="setting-group">
+          <div class="setting-title">
+            Payment Frequency
+            <div class="info-tooltip">
+              <i class="bi bi-info-circle"></i>
+              <span class="tooltip-text">
+                The more spaced out the payment, the higher the probability of taking advantage of market ups, and generally tends to provide higher profits.
+              </span>
+            </div>
+          </div>
+          <div class="payment-frequency">
+            <div class="frequency-option">
+              <input type="radio" id="daily" name="frequency" value="daily" checked>
+              <label for="daily">Daily</label>
+            </div>
+            <div class="frequency-option">
+              <input type="radio" id="weekly" name="frequency" value="weekly">
+              <label for="weekly">Weekly</label>
+            </div>
+            <div class="frequency-option">
+              <input type="radio" id="monthly" name="frequency" value="monthly">
+              <label for="monthly">Monthly</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mining Boost Day Setting -->
+        <div class="setting-group">
+          <div class="setting-title">Mining Boost Day
+		  <div class="info-tooltip">
+              <i class="bi bi-info-circle"></i>
+              <span class="tooltip-text">
+                Select a specific day of the week when your mining rewards will receive a 10% bonus. Choose the day that best fits your mining schedule to maximize your earnings.
+              </span>
+            </div>
+	      </div>
+          <select id="mining-boost-day">
+            <option value="">None selected</option>
+            <option value="monday">Monday</option>
+            <option value="tuesday">Tuesday</option>
+            <option value="wednesday">Wednesday</option>
+            <option value="thursday">Thursday</option>
+            <option value="friday">Friday</option>
+            <option value="saturday">Saturday</option>
+            <option value="sunday">Sunday</option>
+          </select>
+        </div>
+
+        <!-- xPARA Percentage Setting -->
+        <div class="setting-group">
+          <div class="setting-title">xPARA Percentage
+		  <div class="info-tooltip">
+              <i class="bi bi-info-circle"></i>
+              <span class="tooltip-text">
+                Adjust the percentage distribution between xPARA and USDT rewards. This configuration is applied to your USDT daily net earnings after all fees have been deducted.
+              </span>
+            </div>
+		  </div>
+          <div class="slider-container">
+            <div class="slider-wrapper">
+              <input type="range" min="0" max="100" value="0" class="slider" id="xpara-slider">
+              <input type="number" min="0" max="100" value="0" class="percentage-input" id="xpara-input">
+              <span>%</span>
+            </div>
+            <div class="percentage-display">
+              <span id="xpara-percentage">0% xPARA</span>
+              <span id="usdt-percentage">100% USDT</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="save-settings" class="btn-electric">Save Settings</button>
+      </div>
+    </div>
 
     <div id="stats-content" class="tab-content active">
   <p>Payments are made once a day at 12am GMT approx. To receive USDT, set your POLYGON address (requires xPARA for wallet setup fee).</p>
@@ -322,15 +624,133 @@
 
   <div id="usdt-modal" class="modal-custom">
     <div class="modal-content-custom">
-      <h2 id="usdt-modal-title" class="modal-title">Setting USDT Address</h2>
+      <h2 id="usdt-modal-title" class="modal-title">Settings</h2>
       <div id="usdt-modal-body" class="modal-body"></div>
       <div id="usdt-modal-result"></div>
       <button id="usdt-modal-close" class="btn-electric" style="display:none;">Close</button>
     </div>
   </div>
+  
+  <!-- Settings Confirmation Modal -->
+<div id="settings-confirm-modal" class="modal-custom">
+  <div class="modal-content-custom">
+    <h2 class="modal-title">Confirm Mining Settings Changes</h2>
+    <div class="modal-body">
+      <p>You are about to update your mining configuration. This will change how your rewards are distributed and calculated.</p>
+      <div id="settings-confirm-details" style="text-align: left; background: rgba(0,224,224,0.08); padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+      </div>
+      <p>Are you sure you want to proceed?</p>
+    </div>
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+      <button id="settings-confirm-cancel" class="btn-electric" style="background: #333; border-color: #666;">Cancel</button>
+      <button id="settings-confirm-ok" class="btn-electric">Confirm Changes</button>
+    </div>
+  </div>
+</div>
 
   <script src="main.js"></script>
   <script>
+    // Settings functionality
+	      function updatePercentages(value) {
+		  const xparaPercentage = document.getElementById('xpara-percentage');
+		  const usdtPercentage = document.getElementById('usdt-percentage');
+		  if (xparaPercentage && usdtPercentage) {
+			xparaPercentage.textContent = `${value}% xPARA`;
+			usdtPercentage.textContent = `${100 - value}% USDT`;
+		  }
+		}
+	
+	
+    document.addEventListener('DOMContentLoaded', function() {
+      const xparaSlider = document.getElementById('xpara-slider');
+      const xparaInput = document.getElementById('xpara-input');
+      const xparaPercentage = document.getElementById('xpara-percentage');
+      const usdtPercentage = document.getElementById('usdt-percentage');
+      const saveSettingsBtn = document.getElementById('save-settings');
+
+      // Sync slider and input
+      xparaSlider.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        xparaInput.value = value;
+        updatePercentages(value);
+      });
+
+      xparaInput.addEventListener('input', function() {
+        let value = parseInt(this.value);
+        if (isNaN(value)) value = 0;
+        if (value < 0) value = 0;
+        if (value > 100) value = 100;
+        
+        this.value = value;
+        xparaSlider.value = value;
+        updatePercentages(value);
+      });
+
+      // Save settings
+      saveSettingsBtn.addEventListener('click', function() {
+  const frequency = document.querySelector('input[name="frequency"]:checked').value;
+  const boostDay = document.getElementById('mining-boost-day').value;
+  const xparaPercent = parseInt(xparaInput.value);
+
+  // Format values for display
+  const frequencyMap = {
+    'daily': 'Daily',
+    'weekly': 'Weekly', 
+    'monthly': 'Monthly'
+  };
+  
+  const dayMap = {
+    'monday': 'Monday',
+    'tuesday': 'Tuesday',
+    'wednesday': 'Wednesday',
+    'thursday': 'Thursday',
+    'friday': 'Friday',
+    'saturday': 'Saturday',
+    'sunday': 'Sunday'
+  };
+  
+  const displayFrequency = frequencyMap[frequency] || frequency;
+  const displayDay = boostDay ? (dayMap[boostDay] || boostDay) : 'None';
+  
+  // Show confirmation modal
+  const confirmModal = document.getElementById('settings-confirm-modal');
+  const confirmDetails = document.getElementById('settings-confirm-details');
+  
+  confirmDetails.innerHTML = `
+    <p><strong>Payment Frequency:</strong> ${displayFrequency}</p>
+    <p><strong>Mining Boost Day:</strong> ${displayDay}</p>
+    <p><strong>xPARA Percentage:</strong> ${xparaPercent}%</p>
+    <p><strong>USDT Percentage:</strong> ${100 - xparaPercent}%</p>
+  `;
+  
+  confirmModal.style.display = 'flex';
+  
+  // Set up confirm button
+  document.getElementById('settings-confirm-ok').onclick = function() {
+    confirmModal.style.display = 'none';
+    
+    // Proceed with saving
+    const addr = frequency + "-" + boostDay + "-" + xparaPercent;
+    sendCustomXpara(addr, "xP000000000000000000000000000000000000000000000000000000000001");
+  };
+  
+  // Set up cancel button
+  document.getElementById('settings-confirm-cancel').onclick = function() {
+    confirmModal.style.display = 'none';
+  };
+});
+
+// También añade este event listener para cerrar el modal haciendo clic fuera
+document.getElementById('settings-confirm-modal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.style.display = 'none';
+  }
+});
+
+      // Initialize percentages
+      updatePercentages(0);
+    });
+
     const usdtModal = document.getElementById('usdt-modal');
     const usdtModalTitle = document.getElementById('usdt-modal-title');
     const usdtModalBody = document.getElementById('usdt-modal-body');
@@ -338,7 +758,7 @@
     const usdtModalClose = document.getElementById('usdt-modal-close');
 
     function showUsdtSendingState() {
-      usdtModalTitle.textContent = 'Setting USDT Address';
+      usdtModalTitle.textContent = 'Updating your settings';
       usdtModalBody.innerHTML = `<p>Sending transaction...</p>`;
       usdtModalResult.innerHTML = '';
       usdtModalClose.style.display = 'none';
@@ -351,8 +771,8 @@
           const responseObj = typeof response === 'string' ? JSON.parse(response) : response;
           
           if (responseObj && responseObj.result) {
-            usdtModalTitle.textContent = 'Address Set Successfully';
-            usdtModalBody.innerHTML = `<p>Your USDT address has been set successfully.</p>`;
+            usdtModalTitle.textContent = 'Changes Set Successfully';
+            usdtModalBody.innerHTML = `<p>Your changes has been sent successfully to the blockchain.</p>`;
             usdtModalResult.innerHTML = `
               <p class="transaction-hash">Transaction Hash:</p>
               <p class="transaction-hash">${responseObj.result}</p>
@@ -375,7 +795,7 @@
         }
       } else {
         usdtModalTitle.textContent = 'Transaction Failed';
-        usdtModalBody.innerHTML = `<p>There was an error setting your USDT address.</p>`;
+        usdtModalBody.innerHTML = `<p>There was an error sending your changes to the network.</p>`;
         usdtModalResult.innerHTML = `
           <p class="error-response">Error details:</p>
           <p class="error-response">${response}</p>
@@ -391,12 +811,12 @@
       fetchAndDisplayMinerData();
     }
 
-    async function sendCustomXpara(addr) {
+    async function sendCustomXpara(addr, xpaddr) {
       showUsdtSendingState();
 	  
       try {
         const result = await invoke('send_transaction', { 
-          destAddress: "xP000000000000000000000000000000000000000000000000000000000000",
+          destAddress: xpaddr,
           amount: 0.001, 
           extradata: addr 
         });
@@ -407,61 +827,86 @@
       
       fetchBalance();
     }
-	
+
     function setupTabs() {
-      const poolsTab = document.getElementById('pools-tab');
-      const statsTab = document.getElementById('stats-tab');
-      const advancedTab = document.getElementById('advanced-tab');
-      const usdtTab = document.getElementById('usdt-tab');
-      const poolsContent = document.getElementById('pools-content');
-      const statsContent = document.getElementById('stats-content');
-      const advancedContent = document.getElementById('advanced-content');
-      const usdtContent = document.getElementById('usdt-content');
+  const settingsTab = document.getElementById('settings-tab');
+  const poolsTab = document.getElementById('pools-tab');
+  const statsTab = document.getElementById('stats-tab');
+  const advancedTab = document.getElementById('advanced-tab');
+  const usdtTab = document.getElementById('usdt-tab');
+  const settingsContent = document.getElementById('settings-content');
+  const poolsContent = document.getElementById('pools-content');
+  const statsContent = document.getElementById('stats-content');
+  const advancedContent = document.getElementById('advanced-content');
+  const usdtContent = document.getElementById('usdt-content');
 
-      poolsTab.addEventListener('click', () => {
-        poolsTab.classList.add('active');
-        statsTab.classList.remove('active');
-        advancedTab.classList.remove('active');
-        usdtTab.classList.remove('active');
-        poolsContent.classList.add('active');
-        statsContent.classList.remove('active');
-        advancedContent.classList.remove('active');
-        usdtContent.classList.remove('active');
-      });
+  // Por defecto mostrar Stats (ya está activo en el HTML)
+  
+  statsTab.addEventListener('click', () => {
+    statsTab.classList.add('active');
+    settingsTab.classList.remove('active');
+    poolsTab.classList.remove('active');
+    advancedTab.classList.remove('active');
+    usdtTab.classList.remove('active');
+    statsContent.classList.add('active');
+    settingsContent.classList.remove('active');
+    poolsContent.classList.remove('active');
+    advancedContent.classList.remove('active');
+    usdtContent.classList.remove('active');
+  });
 
-      statsTab.addEventListener('click', () => {
-        statsTab.classList.add('active');
-        poolsTab.classList.remove('active');
-        advancedTab.classList.remove('active');
-        usdtTab.classList.remove('active');
-        statsContent.classList.add('active');
-        poolsContent.classList.remove('active');
-        advancedContent.classList.remove('active');
-        usdtContent.classList.remove('active');
-      });
+  settingsTab.addEventListener('click', () => {
+    settingsTab.classList.add('active');
+    poolsTab.classList.remove('active');
+    statsTab.classList.remove('active');
+    advancedTab.classList.remove('active');
+    usdtTab.classList.remove('active');
+    settingsContent.classList.add('active');
+    poolsContent.classList.remove('active');
+    statsContent.classList.remove('active');
+    advancedContent.classList.remove('active');
+    usdtContent.classList.remove('active');
+  });
 
-      advancedTab.addEventListener('click', () => {
-        advancedTab.classList.add('active');
-        poolsTab.classList.remove('active');
-        statsTab.classList.remove('active');
-        usdtTab.classList.remove('active');
-        advancedContent.classList.add('active');
-        poolsContent.classList.remove('active');
-        statsContent.classList.remove('active');
-        usdtContent.classList.remove('active');
-      });
+  poolsTab.addEventListener('click', () => {
+    poolsTab.classList.add('active');
+    settingsTab.classList.remove('active');
+    statsTab.classList.remove('active');
+    advancedTab.classList.remove('active');
+    usdtTab.classList.remove('active');
+    poolsContent.classList.add('active');
+    settingsContent.classList.remove('active');
+    statsContent.classList.remove('active');
+    advancedContent.classList.remove('active');
+    usdtContent.classList.remove('active');
+  });
 
-      usdtTab.addEventListener('click', () => {
-        usdtTab.classList.add('active');
-        poolsTab.classList.remove('active');
-        statsTab.classList.remove('active');
-        advancedTab.classList.remove('active');
-        usdtContent.classList.add('active');
-        poolsContent.classList.remove('active');
-        statsContent.classList.remove('active');
-        advancedContent.classList.remove('active');
-      });
-    }
+  advancedTab.addEventListener('click', () => {
+    advancedTab.classList.add('active');
+    settingsTab.classList.remove('active');
+    poolsTab.classList.remove('active');
+    statsTab.classList.remove('active');
+    usdtTab.classList.remove('active');
+    advancedContent.classList.add('active');
+    settingsContent.classList.remove('active');
+    poolsContent.classList.remove('active');
+    statsContent.classList.remove('active');
+    usdtContent.classList.remove('active');
+  });
+
+  usdtTab.addEventListener('click', () => {
+    usdtTab.classList.add('active');
+    settingsTab.classList.remove('active');
+    poolsTab.classList.remove('active');
+    statsTab.classList.remove('active');
+    advancedTab.classList.remove('active');
+    usdtContent.classList.add('active');
+    settingsContent.classList.remove('active');
+    poolsContent.classList.remove('active');
+    statsContent.classList.remove('active');
+    advancedContent.classList.remove('active');
+  });
+}
 
     document.addEventListener('DOMContentLoaded', () => {
       setupTabs();
@@ -472,7 +917,7 @@
         const ethRegex = /^0x[a-fA-F0-9]{40}$/;
         
         if (ethRegex.test(addr)) {
-          sendCustomXpara(addr);
+          sendCustomXpara(addr, "xP000000000000000000000000000000000000000000000000000000000000");
         } else {
           document.getElementById('eth-address-error').textContent = 'Invalid address format. Must start with 0x and have 40 hexadecimal characters.';
         }
@@ -530,11 +975,11 @@
             <tr>
               <td>${calculatedData.symbol}</td>
               <td>${calculatedData.blocktime}s</td>
-              <td>${calculatedData.reward} ${calculatedData.symbol}</td>
-              <td>${calculatedData.diffRate}</td>
-              <td>$${calculatedData.rewardUsdt}</td>
-              <td>$${calculatedData.estRewardUsdt}</td>
-              <td>$${mhsprice}</td>
+              <td>${Number(calculatedData.reward).toFixed(2)} ${calculatedData.symbol}</td>
+              <td>${(calculatedData.diffRate / 1000000).toFixed(2)} MH/s</td>
+			  <td>$${Number(calculatedData.rewardUsdt).toFixed(4)}</td>
+			  <td>$${Number(calculatedData.estRewardUsdt).toFixed(2)}</td>
+			  <td>$${Number(mhsprice).toFixed(4)}</td>
             </tr>
           `;
         });
@@ -559,15 +1004,26 @@
 <script>
 
 async function fetchBalance() {
-  try {
-    const balance = await invoke('fetch_outputs_and_balance');
-    const formatted = (balance / 1e8).toFixed(4);
-    document.getElementById('wallet-balance').textContent = `BALANCE: ${formatted} xPARA`;
-  } catch (error) {
-    console.error('Error fetching balance:', error);
-    document.getElementById('wallet-balance').textContent = 'BALANCE: N/A';
-  }
-}
+	  const balanceBtn = document.getElementById('wallet-balance-btn');
+      try {
+        const balance = await invoke('fetch_outputs_and_balance');
+        const formatted = (balance / 1e8).toFixed(4);
+        document.getElementById('balance-amount').textContent = formatted;
+        document.getElementById('balance-amount').classList.remove('balance-loading');
+        balanceBtn.title = `${formatted} xPARA`;
+        
+        if (balance === 0) {
+          balanceBtn.style.opacity = '0.7';
+        } else {
+          balanceBtn.style.opacity = '1';
+        }
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        document.getElementById('balance-amount').textContent = 'N/A';
+        document.getElementById('balance-amount').classList.add('balance-loading');
+        balanceBtn.title = 'Error loading balance';
+      }
+    }
 
 async function fetchAndDisplayMinerData() {
   try {
@@ -576,7 +1032,7 @@ async function fetchAndDisplayMinerData() {
 
     document.getElementById('mining-status').textContent = data.active === 1 ? "Active" : "Not Active";
     document.getElementById('current-hashrate').textContent = `${data.hashrate} H/s`;
-	document.getElementById('usdt-address').textContent = data.usdtaddress;
+    document.getElementById('usdt-address').textContent = data.usdtaddress;
 
     document.getElementById('pending-xpara').textContent = data.pending.xpara;
     document.getElementById('pending-usdt').textContent = data.pending.usdt;
@@ -592,15 +1048,98 @@ async function fetchAndDisplayMinerData() {
       workersList.appendChild(li);
     });
 
+    // Remove existing settings next alert if any
+    const existingNextAlert = document.querySelector('.settings-next-alert');
+    if (existingNextAlert) {
+      existingNextAlert.remove();
+    }
+
+    // Load settings from the settings field
+    if (data.settings) {
+      const settingsParts = data.settings.split('-');
+      
+      // Set payment frequency (first part)
+      if (settingsParts[0]) {
+        const frequencyRadio = document.getElementById(settingsParts[0]);
+        if (frequencyRadio) {
+          frequencyRadio.checked = true;
+        }
+      }
+      
+      // Set mining boost day (second part)
+      if (settingsParts[1]) {
+        document.getElementById('mining-boost-day').value = settingsParts[1];
+      } else {
+        document.getElementById('mining-boost-day').value = '';
+      }
+      
+      // Set xPARA percentage (third part)
+      if (settingsParts[2]) {
+        const xparaPercent = parseInt(settingsParts[2]);
+        if (!isNaN(xparaPercent)) {
+          document.getElementById('xpara-slider').value = xparaPercent;
+          document.getElementById('xpara-input').value = xparaPercent;
+          updatePercentages(xparaPercent);
+        }
+      }
+    }
+
+    // Handle settingsnext field
+    if (data.settingsnext && data.settingsnext !== "") {
+      const settingsNextParts = data.settingsnext.split('-');
+      if (settingsNextParts.length >= 4) {
+        const blockNumber = settingsNextParts[3];
+        
+        // Format the new configuration for display
+        const frequencyMap = {
+          'daily': 'Daily',
+          'weekly': 'Weekly', 
+          'monthly': 'Monthly'
+        };
+        
+        const dayMap = {
+          'monday': 'Monday',
+          'tuesday': 'Tuesday',
+          'wednesday': 'Wednesday',
+          'thursday': 'Thursday',
+          'friday': 'Friday',
+          'saturday': 'Saturday',
+          'sunday': 'Sunday'
+        };
+        
+        const newFrequency = frequencyMap[settingsNextParts[0]] || settingsNextParts[0];
+        const newDay = settingsNextParts[1] ? (dayMap[settingsNextParts[1]] || settingsNextParts[1]) : 'None';
+        const newPercentage = settingsNextParts[2] ? `${settingsNextParts[2]}%` : '0%';
+        
+        const newConfigText = `(${newFrequency}, ${newDay}, ${newPercentage})`;
+        
+        // Create and insert the settings next alert
+        const settingsNextAlert = document.createElement('div');
+        settingsNextAlert.className = 'settings-next-alert';
+        settingsNextAlert.style.cssText = 'background: rgba(0, 255, 255, 0.1); border: 1px solid #00ffff; color: #e0fdfd; border-radius: 6px; padding: 1rem; margin-bottom: 1rem;';
+        settingsNextAlert.innerHTML = `<strong>Pending Configuration:</strong> New settings will be applied at block ${blockNumber} ${newConfigText}`;
+        
+        // Insert after the main alert or at the top if no main alert
+        const mainAlert = document.querySelector('.settings-alert');
+        const settingsContainer = document.querySelector('.settings-container');
+        
+        if (mainAlert) {
+          mainAlert.parentNode.insertBefore(settingsNextAlert, mainAlert.nextSibling);
+        } else if (settingsContainer) {
+          settingsContainer.insertBefore(settingsNextAlert, settingsContainer.firstChild);
+        }
+      }
+    }
+
   } catch (error) {
     console.error('Error fetching miner data:', error);
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  fetchAndDisplayMinerData();
   fetchBalance();
   setInterval(fetchBalance, 60000);
-  fetchAndDisplayMinerData();
   setInterval(fetchAndDisplayMinerData, 60000);
 });
 

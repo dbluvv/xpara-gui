@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>xPARASITE - Wallet</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
   <style>
     body, html {
       margin: 0;
@@ -51,10 +53,60 @@
       box-shadow: 0 0 12px rgba(0,255,255,0.4);
     }
 
-    #wallet-balance {
-      font-size: 1.1rem;
-      color: #00e0e0;
+    .balance-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .balance-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(0, 224, 224, 0.1) 0%, rgba(10, 10, 10, 0.9) 100%);
+      border: 1px solid #00e0e0;
+      border-radius: 10px;
+      padding: 0.4rem 0.8rem;
+      color: #e0fdfd;
       font-weight: bold;
+      font-size: 1rem;
+      cursor: default;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .balance-btn:hover {
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      background: linear-gradient(135deg, rgba(0, 224, 224, 0.15) 0%, rgba(10, 10, 10, 0.95) 100%);
+      transform: translateY(-1px);
+    }
+
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.5));
+      transition: transform 0.3s ease;
+    }
+
+    .balance-btn:hover .logo-icon {
+      transform: rotate(5deg) scale(1.1);
+    }
+
+    .balance-amount {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #00e0e0;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .balance-loading {
+      color: #8afcfc;
+      font-style: italic;
+      opacity: 0.8;
     }
 
     .container { padding: 2rem; text-align: center; }
@@ -83,41 +135,40 @@
     }
 
     .address-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-}
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
 
-#current-address {
-  font-family: "Segoe UI", Arial, sans-serif;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  background: #111;
-  border: 1px solid #00e0e0;
-  border-right: none; /* quita el borde derecho para fusionar con el botón */
-  border-radius: 6px 0 0 6px; /* solo esquinas izquierda */
-  color: #e0fdfd;
-  text-align: center;
-}
+    #current-address {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      background: #111;
+      border: 1px solid #00e0e0;
+      border-right: none;
+      border-radius: 6px 0 0 6px;
+      color: #e0fdfd;
+      text-align: center;
+    }
 
-.btn-copy {
-  background: #00e0e0;
-  color: #0a0a0a;
-  border: 1px solid #00e0e0;
-  border-left: none; /* quita el borde izquierdo para fusionar con el div */
-  border-radius: 0 6px 6px 0; /* solo esquinas derecha */
-  cursor: pointer;
-  font-weight: bold;
-  text-transform: uppercase;
-  box-shadow: 0 0 8px rgba(0,255,255,0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 0.8rem;
-}
-
+    .btn-copy {
+      background: #00e0e0;
+      color: #0a0a0a;
+      border: 1px solid #00e0e0;
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      box-shadow: 0 0 8px rgba(0,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0.8rem;
+    }
 
     .modal-custom {
       display: none;
@@ -149,30 +200,30 @@
   <header>
     <nav>
       <a href="index.html" class="btn-electric">← Exit</a>
+	  <a href="tokens.html" id="recv-btn" class="btn-electric">Tokens</a>
       <button id="send-btn" class="btn-electric">Send</button>
       <a href="sign.html" id="recv-btn" class="btn-electric">Sign</a>
       <a href="receive.html" id="recv-btn" class="btn-electric">Receive</a>
       <button id="view-keys-btn" class="btn-electric">Keys</button>
     </nav>
-    <div>
-      <span id="wallet-balance">BALANCE: 0 xPARA</span>
+    <div class="balance-container">
+      <div class="balance-btn" id="wallet-balance-btn">
+        <img src="/assets/logo.png" alt="xPARA Logo" class="logo-icon" id="logo-img" style="margin-right: 4px;">
+        <span class="balance-amount" id="balance-amount">0.0000</span>
+      </div>
     </div>
   </header>
 
   <div class="container">
-
-
-
     <h1 class="title">Select one task for start getting xPARA</h1>
-<div class="address-container">
-  <div id="current-address" style="border-top-right-radius:0; border-bottom-right-radius:0;">Loading address...</div>
-  <button id="copy-address-btn" class="btn-copy" style="border-top-left-radius:0; border-bottom-left-radius:0; padding:0.5rem 0.8rem;">📋</button>
-</div>
+    <div class="address-container">
+      <div id="current-address" style="border-top-right-radius:0; border-bottom-right-radius:0;">Loading address...</div>
+      <button id="copy-address-btn" class="btn-copy" style="border-top-left-radius:0; border-bottom-left-radius:0; padding:0.5rem 0.8rem;"><i class="bi bi-clipboard fancy-icon" aria-hidden="true"></i></button>
+    </div>
     <div class="task-buttons">
       <button id="upow-mining-btn" class="btn-electric">uPOW Mining</button>
       <a href="staking.html" class="btn-electric">xPARA Staking</a>
       <button id="rng-population-btn" class="btn-electric">RNG Population</button>
-      <button id="oracle-services-btn" class="btn-electric">Oracle Services</button>
     </div>
     <div class="mining-stats">
       Total miners: <span id="total-miners">0</span>, 
@@ -194,6 +245,14 @@
     const signModalTitle = document.getElementById('sign-modal-title');
     const signModalBody = document.getElementById('sign-modal-body');
     const signModalOk = document.getElementById('sign-modal-ok');
+    const logoImg = document.getElementById('logo-img');
+    const balanceBtn = document.getElementById('wallet-balance-btn');
+
+    // Si el logo no carga, mostramos un fallback
+    logoImg.onerror = function() {
+      this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300e0e0"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+      this.alt = "xPARA";
+    };
 
     function showModal(title, body) {
       signModalTitle.textContent = title;
@@ -226,10 +285,34 @@
       try {
         const balance = await invoke('fetch_outputs_and_balance');
         const formatted = (balance / 1e8).toFixed(4);
-        document.getElementById('wallet-balance').textContent = `BALANCE: ${formatted} xPARA`;
+        document.getElementById('balance-amount').textContent = formatted;
+        document.getElementById('balance-amount').classList.remove('balance-loading');
+        balanceBtn.title = `${formatted} xPARA`;
+        
+        if (balance === 0) {
+          balanceBtn.style.opacity = '0.7';
+        } else {
+          balanceBtn.style.opacity = '1';
+        }
       } catch (error) {
         console.error('Error fetching balance:', error);
-        document.getElementById('wallet-balance').textContent = 'BALANCE: N/A';
+        document.getElementById('balance-amount').textContent = 'N/A';
+        document.getElementById('balance-amount').classList.add('balance-loading');
+        balanceBtn.title = 'Error loading balance';
+      }
+    }
+
+    async function fetchWalletAddress() {
+      try {
+        const wallet = await invoke('get_wallet');
+        if (wallet && wallet.address) {
+          document.getElementById('current-address').textContent = wallet.address;
+        } else {
+          document.getElementById('current-address').textContent = 'No wallet loaded';
+        }
+      } catch (error) {
+        console.error('Error fetching wallet:', error);
+        document.getElementById('current-address').textContent = 'Error loading wallet';
       }
     }
 
@@ -237,7 +320,7 @@
     const addressOutput = document.getElementById('current-address');
 
     copyBtn.addEventListener('click', () => {
-      if(!addressOutput.textContent || addressOutput.textContent === "Loading address...") {
+      if(!addressOutput.textContent || addressOutput.textContent === "Loading address..." || addressOutput.textContent === "No wallet loaded") {
         showModal("Error", "Address not available");
         return;
       }
@@ -246,9 +329,17 @@
         .catch(err => showModal("Error", "Failed to copy: " + err));
     });
 
+    // Hacer clic en el botón de balance para recargar
+    balanceBtn.addEventListener('click', () => {
+      document.getElementById('balance-amount').textContent = '...';
+      document.getElementById('balance-amount').classList.add('balance-loading');
+      fetchBalance();
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
       fetchMiningData();
       fetchBalance();
+      fetchWalletAddress();
       setInterval(fetchMiningData, 60000);
       setInterval(fetchBalance, 60000);
     });
